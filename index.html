@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>波浪选股报告 20260625</title>
+<style>
+  :root {
+    --bg: #0f172a; --card: #1e293b; --border: #334155;
+    --text: #e2e8f0; --dim: #64748b; --accent: #38bdf8;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.6; padding: 24px;
+  }
+  .container { max-width: 1200px; margin: 0 auto; }
+  h1 { font-size: 28px; margin-bottom: 4px; }
+  .subtitle { color: var(--dim); font-size: 14px; margin-bottom: 24px; }
+  .market-bar {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 20px; margin-bottom: 24px; display: flex; gap: 32px; flex-wrap: wrap;
+  }
+  .market-bar .item { display: flex; flex-direction: column; }
+  .market-bar .label { font-size: 12px; color: var(--dim); }
+  .market-bar .value { font-size: 18px; font-weight: 600; }
+  .market-bar .verdict {
+    flex: 1; min-width: 300px; padding: 12px 16px; border-radius: 8px;
+    background: rgba(56,189,248,0.08); border: 1px solid rgba(56,189,248,0.2);
+  }
+  .market-bar .verdict .label { margin-bottom: 4px; }
+  .market-bar .verdict .value { font-size: 14px; line-height: 1.5; }
+  .tiers { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+  .tier-card {
+    border: 1px solid; border-radius: 12px; padding: 20px;
+  }
+  .tier-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+  .tier-icon { font-size: 20px; }
+  .tier-label { font-size: 20px; font-weight: 700; }
+  .tier-desc { font-size: 13px; color: var(--dim); flex: 1; }
+  .tier-count { font-size: 18px; font-weight: 700; }
+  .tier-note { font-size: 13px; color: var(--dim); margin-bottom: 12px; font-style: italic; }
+  .stock-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .stock-table th { text-align: left; padding: 6px 8px; color: var(--dim); font-weight: 500; border-bottom: 1px solid var(--border); }
+  .stock-table td { padding: 6px 8px; border-bottom: 1px solid rgba(51,65,85,0.4); }
+  .stock-table .code { color: var(--accent); font-family: monospace; }
+  .stock-table .name { font-weight: 600; }
+  .stock-table .reason { color: var(--dim); max-width: 300px; }
+  .stock-table .tags { white-space: nowrap; }
+  .stock-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 4px 10px; font-size: 13px; }
+  .section {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 20px; margin-bottom: 16px;
+  }
+  .section h3 { font-size: 16px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .section ul { list-style: none; padding-left: 0; }
+  .section ul li { padding: 4px 0; font-size: 14px; }
+  .section ul li::before { content: "▸ "; color: var(--dim); }
+  .risk-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .risk-item { background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.15); border-radius: 8px; padding: 12px; }
+  .risk-item .label { font-size: 12px; color: var(--dim); margin-bottom: 4px; }
+  .risk-item .value { font-size: 13px; }
+  .empty { color: var(--dim); font-style: italic; }
+  .footer { text-align: center; color: var(--dim); font-size: 12px; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border); }
+  @media (max-width: 768px) {
+    .tiers { grid-template-columns: 1fr; }
+    .risk-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🌊 波浪选股报告</h1>
+  <p class="subtitle">20260625 · 5 wave-reviewer agents 并行复审 (model=fast) + 主 LLM gather (手动触发, qwen -p Workflow 失败)</p>
+
+  <div class="market-bar">
+    <div class="item"><span class="label">上证指数</span><span class="value">上证 4106</span></div>
+    <div class="item"><span class="label">MA20</span><span class="value">4067</span></div>
+    <div class="item"><span class="label">MA60</span><span class="value">4063</span></div>
+    <div class="item"><span class="label">5日涨幅</span><span class="value">+0.4%</span></div>
+    <div class="verdict">
+      <span class="label">LLM 判定</span>
+      <span class="value">震荡偏强延续（连续四日0只A档，B档从6扩至9，但D档74%仍高）</span>
+    </div>
+  </div>
+
+  <div class="tiers">
+    
+    <div class="tier-card" style="border-color:#22c55e;background:rgba(34,197,94,0.10)">
+      <div class="tier-header">
+        <span class="tier-icon">🟢</span>
+        <span class="tier-label" style="color:#22c55e">A 档</span>
+        <span class="tier-desc">强烈推荐</span>
+        <span class="tier-count" style="color:#22c55e">0 只</span>
+      </div>
+      <p class="tier-note">连续四日0只A档。震荡偏强格局未变，宁缺毋滥。</p>
+      <p class="empty">无</p>
+    </div>
+    <div class="tier-card" style="border-color:#eab308;background:rgba(234,179,8,0.10)">
+      <div class="tier-header">
+        <span class="tier-icon">🟡</span>
+        <span class="tier-label" style="color:#eab308">B 档</span>
+        <span class="tier-desc">可关注</span>
+        <span class="tier-count" style="color:#eab308">9 只</span>
+      </div>
+      
+      
+      <table class="stock-table">
+        <thead><tr><th>#</th><th>代码</th><th>名称</th><th>PE</th><th>市值(亿)</th><th>核心理由</th><th>消息面</th></tr></thead>
+        <tbody>
+        <tr>
+          <td>1</td>
+          <td class="code">600546</td>
+          <td class="name">山煤国际</td>
+          <td>19.9</td>
+          <td>233</td>
+          <td class="reason">Clean buy(net+24.8)+PE甜点+缩量健康调整+0.618+交替合理，连续B档</td>
+          <td class="tags">✅无消息面风险</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td class="code">600023</td>
+          <td class="name">浙能电力</td>
+          <td>9.5</td>
+          <td>711</td>
+          <td class="reason">H35电力避风港+RSI超卖(22)+连跌9日H41反弹候选+3次大阳线，但PE&lt;15(H18)</td>
+          <td class="tags">✅无消息面风险</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td class="code">002832</td>
+          <td class="name">比音勒芬</td>
+          <td>21.9</td>
+          <td>120</td>
+          <td class="reason">H51c均线粘合+放量=涨停前蓄势信号+0.618+PE甜点+董事增持，但net+4.9接近0</td>
+          <td class="tags">📅董事增持进行中</td>
+        </tr>
+        <tr>
+          <td>13</td>
+          <td class="code">000417</td>
+          <td class="name">合百集团</td>
+          <td>38.8</td>
+          <td>62</td>
+          <td class="reason">唯一强烈买入+均线多头+放量上涨(3浪)+交替合理，但PE&gt;30+小盘+中高位追高风险</td>
+          <td class="tags">⚠️异常波动历史</td>
+        </tr>
+        <tr>
+          <td>20</td>
+          <td class="code">688612</td>
+          <td class="name">威迈斯</td>
+          <td>21.6</td>
+          <td>120</td>
+          <td class="reason">Clean buy(net+24.5)+PE甜点+0.618+H41空头反弹候选+6次大阳线，但放量下跌+规则3违反</td>
+          <td class="tags">✅无消息面风险</td>
+        </tr>
+        <tr>
+          <td>27</td>
+          <td class="code">002437</td>
+          <td class="name">誉衡药业</td>
+          <td>15.0</td>
+          <td>57</td>
+          <td class="reason">Clean buy+PE甜点下沿+低位38%+0.618+空头排列=H41反弹候选，连续B档</td>
+          <td class="tags">✅无消息面风险</td>
+        </tr>
+        <tr>
+          <td>36</td>
+          <td class="code">603075</td>
+          <td class="name">热威股份</td>
+          <td>27.4</td>
+          <td>89</td>
+          <td class="reason">组内最强clean buy(net+18.5)+PE甜点+H41反弹候选，但止损空间仅0.9%致命缺陷</td>
+          <td class="tags">✅无消息面风险</td>
+        </tr>
+        <tr>
+          <td>71</td>
+          <td class="code">000333</td>
+          <td class="name">美的集团</td>
+          <td>13.2</td>
+          <td>5824</td>
+          <td class="reason">H34大盘保护(5824亿)+H35消费避风港+高分红10派38+北向买入，但RSI顶背离+sell&gt;buy</td>
+          <td class="tags">✅高分红+北向</td>
+        </tr>
+        <tr>
+          <td>87</td>
+          <td class="code">000906</td>
+          <td class="name">浙商中拓</td>
+          <td>20.2</td>
+          <td>37</td>
+          <td class="reason">PE甜点+clean信号+RSI极度超卖(19)+空头=H41反弹候选+0.618+中低位25%，但债务传闻</td>
+          <td class="tags">🚫债务传闻+✅诉讼胜诉</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="tier-card" style="border-color:#94a3b8;background:rgba(148,163,184,0.10)">
+      <div class="tier-header">
+        <span class="tier-icon">⚪</span>
+        <span class="tier-label" style="color:#94a3b8">C 档</span>
+        <span class="tier-desc">观望</span>
+        <span class="tier-count" style="color:#94a3b8">17 只</span>
+      </div>
+      
+      <div class="stock-chips"><span class="chip">华能国际</span><span class="chip">金螳螂</span><span class="chip">祥生医疗</span><span class="chip">埃夫特</span><span class="chip">英搏尔</span><span class="chip">瑞晨环保</span><span class="chip">飞亚达</span><span class="chip">嵘泰股份</span><span class="chip">航新科技</span><span class="chip">农尚环境</span><span class="chip">四方股份</span><span class="chip">华塑科技</span><span class="chip">金诚信</span><span class="chip">三羊马</span><span class="chip">澳柯玛</span><span class="chip">天成自控</span><span class="chip">京能电力</span></div>
+    </div>
+    <div class="tier-card" style="border-color:#ef4444;background:rgba(239,68,68,0.10)">
+      <div class="tier-header">
+        <span class="tier-icon">🔴</span>
+        <span class="tier-label" style="color:#ef4444">D 档</span>
+        <span class="tier-desc">回避</span>
+        <span class="tier-count" style="color:#ef4444">74 只</span>
+      </div>
+      <p class="tier-note">D档74%。H28陷阱泛滥(75%+股票sell&gt;buy)+H46触发7只+亏损股30只+题材驱动股15只+减持/解禁/ST</p>
+      <p class="empty">无</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>⚠️ 风险概览</h3>
+    <div class="risk-grid">
+      <div class="risk-item"><div class="label">H28 陷阱率</div><div class="value">75%+ 满足sell&gt;buy，H28陷阱继续主导D档</div></div>
+      <div class="risk-item"><div class="label">消息面风险</div><div class="value">至少15只查出明确利空(减持/解禁/ST/诉讼/质押/暴跌/重组终止)</div></div>
+      <div class="risk-item"><div class="label">整体评估</div><div class="value">连续四日0只A档。B档扩大至9只但质量参差不齐，首推誉衡药业+山煤国际(连续B档+PE甜点+clean buy)。Workflow工具在qwen -p CLI模式下不可靠(31分钟无产出)，需回退为手动触发或旧prompt方案。</div></div>
+    </div>
+  </div>
+
+  <div class="section"><h3>📋 逐日变化</h3><div class="change-group"><h4>vs_20260624</h4><ul><li>A档连续四日为0，震荡偏强格局未变</li><li>B档 6→9 扩大：新增合百集团(强烈买入)、威迈斯(clean buy)、美的集团(H34大盘保护)、浙商中拓(PE甜点+RSI超卖)</li><li>誉衡药业、山煤国际、浙能电力、比音勒芬连续B档</li><li>C档 24→17 缩小，D档 70→74 回升，市场广度改善未持续</li><li>H46 net≈0触发7只(金房能源/鼎熔岩/晋控电力/三峡新材/继峰股份/春光集团/风语筑/海信家电)，全部直接D档</li><li>沪电股份(002463)价格位置99%=历史最高+sell81&gt;&gt;buy11=极端赢家诅咒</li><li>翱捷科技(688220)7/1限售股解禁+已暴跌11.75%，时间紧迫</li><li>美的集团(000333)首次入B档：H34大盘保护+高分红，但RSI顶背离是隐患</li></ul></div></div>
+
+  <div class="footer">
+    以上分析仅供参考，不构成投资建议。股市有风险，投资需谨慎。<br>
+    Generated by stock-wave-analyzer · 2026-06-25 23:11
+  </div>
+</div>
+</body>
+</html>
