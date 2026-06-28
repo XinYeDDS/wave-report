@@ -6,108 +6,147 @@
 <title>波浪选股报告 20260626</title>
 <style>
   :root {
-    --bg: #0f172a; --card: #1e293b; --border: #334155;
-    --text: #e2e8f0; --dim: #64748b; --accent: #38bdf8;
+    --bg:#080d1a; --bg2:#0f1629; --card:rgba(22,32,52,0.6); --card-hover:rgba(28,40,64,0.8);
+    --border:rgba(148,163,184,0.08); --border-hover:rgba(56,189,248,0.25);
+    --text:#e2e8f0; --dim:#64748b; --dim2:#475569;
+    --accent:#38bdf8; --accent2:#818cf8;
+    --pos:#22c55e; --neg:#ef4444;
+    --shadow:0 4px 24px rgba(0,0,0,0.25); --shadow-hover:0 8px 40px rgba(0,0,0,0.35);
+    --radius:20px; --radius-sm:12px;
   }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+  * { margin:0; padding:0; box-sizing:border-box; }
   body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
-    background: var(--bg); color: var(--text); line-height: 1.6; padding: 24px;
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,sans-serif;
+    background:var(--bg); background-image:radial-gradient(ellipse at top, rgba(56,189,248,0.06), transparent 60%);
+    color:var(--text); line-height:1.6; padding:24px; min-height:100vh;
   }
-  .container { max-width: 1200px; margin: 0 auto; }
-  h1 { font-size: 28px; margin-bottom: 4px; }
-  .subtitle { color: var(--dim); font-size: 14px; margin-bottom: 24px; }
-  .market-bar {
-    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
-    padding: 20px; margin-bottom: 24px; display: flex; gap: 32px; flex-wrap: wrap;
+  .bento { max-width:1200px; margin:0 auto; display:grid; grid-template-columns:repeat(12,1fr); gap:16px; }
+  .card {
+    background:var(--card); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
+    border:1px solid var(--border); border-radius:var(--radius); padding:24px;
+    box-shadow:var(--shadow); transition:all 0.3s cubic-bezier(0.4,0,0.2,1); position:relative; overflow:hidden;
   }
-  .market-bar .item { display: flex; flex-direction: column; }
-  .market-bar .label { font-size: 12px; color: var(--dim); }
-  .market-bar .value { font-size: 18px; font-weight: 600; }
-  .market-bar .verdict {
-    flex: 1; min-width: 300px; padding: 12px 16px; border-radius: 8px;
-    background: rgba(56,189,248,0.08); border: 1px solid rgba(56,189,248,0.2);
+  .card:hover { background:var(--card-hover); border-color:var(--border-hover); box-shadow:var(--shadow-hover); transform:translateY(-2px); }
+  .card::before { content:""; position:absolute; top:0; left:0; right:0; height:1px;
+    background:linear-gradient(90deg, transparent, rgba(56,189,248,0.3), transparent); opacity:0.5; }
+  .span-12 { grid-column:span 12; } .span-8 { grid-column:span 8; }
+  .span-6 { grid-column:span 6; } .span-4 { grid-column:span 4; }
+  .span-3 { grid-column:span 3; }
+
+  /* Hero */
+  .hero { display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:16px;
+    background:linear-gradient(135deg, rgba(56,189,248,0.08), rgba(129,140,248,0.05)); }
+  .hero h1 { font-size:28px; font-weight:800; letter-spacing:-0.5px; }
+  .hero .subtitle { color:var(--dim); font-size:13px; margin-top:4px; }
+  .hero-stats { display:flex; gap:24px; flex-wrap:wrap; }
+  .hero-stat { display:flex; flex-direction:column; align-items:flex-end; }
+  .hero-stat .lbl { font-size:11px; color:var(--dim2); text-transform:uppercase; letter-spacing:0.5px; }
+  .hero-stat .val { font-size:20px; font-weight:700; }
+
+  /* Verdict */
+  .verdict-card { background:linear-gradient(135deg, rgba(56,189,248,0.06), rgba(129,140,248,0.03)); }
+  .verdict-label { font-size:12px; color:var(--accent); font-weight:600; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px; }
+  .verdict-text { font-size:15px; line-height:1.7; }
+
+  /* Tier cards */
+  .tier-card { display:flex; flex-direction:column; gap:12px; }
+  .tier-card .accent-bar { position:absolute; top:0; left:0; width:4px; height:100%; border-radius:4px 0 0 4px; }
+  .tier-header { display:flex; align-items:center; gap:10px; }
+  .tier-badge { width:32px; height:32px; border-radius:10px; display:flex; align-items:center; justify-content:center;
+    font-size:16px; font-weight:800; }
+  .tier-label { font-size:18px; font-weight:700; }
+  .tier-desc { font-size:13px; color:var(--dim); flex:1; }
+  .tier-count { font-size:15px; font-weight:700; padding:2px 12px; border-radius:20px; }
+  .tier-note { font-size:13px; color:var(--dim); font-style:italic; padding:8px 12px; border-radius:8px; background:rgba(148,163,184,0.06); }
+
+  /* Stock table */
+  .stock-table { width:100%; border-collapse:collapse; font-size:13px; }
+  .stock-table th { text-align:left; padding:8px 10px; color:var(--dim2); font-weight:500; font-size:11px;
+    text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid var(--border); }
+  .stock-table td { padding:8px 10px; border-bottom:1px solid rgba(148,163,184,0.06); }
+  .stock-table tr:last-child td { border-bottom:none; }
+  .stock-table tr:hover td { background:rgba(56,189,248,0.04); }
+  .stock-table .code { color:var(--accent); font-family:"SF Mono",monospace; font-size:12px; }
+  .stock-table .name { font-weight:600; }
+  .stock-table .reason { color:var(--dim); max-width:260px; font-size:12px; }
+  .stock-table .tags { white-space:nowrap; font-size:12px; }
+  .stock-chips { display:flex; flex-wrap:wrap; gap:6px; }
+  .chip { background:rgba(148,163,184,0.08); border:1px solid var(--border); border-radius:8px; padding:4px 12px; font-size:13px; }
+  .empty { color:var(--dim2); font-style:italic; font-size:13px; }
+
+  /* Risk */
+  .risk-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:12px; }
+  .risk-item { background:rgba(239,68,68,0.04); border:1px solid rgba(239,68,68,0.1); border-radius:var(--radius-sm); padding:16px; }
+  .risk-item .lbl { font-size:11px; color:var(--dim2); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px; }
+  .risk-item .val { font-size:14px; }
+
+  /* Section */
+  .section-label { font-size:12px; color:var(--accent); font-weight:600; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:12px; }
+  .change-group { margin-bottom:12px; }
+  .change-group h4 { font-size:14px; margin-bottom:6px; color:var(--text); }
+  .change-group ul { list-style:none; }
+  .change-group li { padding:3px 0; font-size:13px; color:var(--dim); }
+  .change-group li::before { content:"▸ "; color:var(--dim2); }
+
+  /* Footer */
+  .footer-card { text-align:center; color:var(--dim2); font-size:12px; border:none; box-shadow:none; background:transparent; }
+  .footer-card:hover { transform:none; background:transparent; }
+  .footer-card a { color:var(--accent); text-decoration:none; }
+
+  @media (max-width:900px) {
+    .span-6,.span-4 { grid-column:span 12; }
+    .span-3 { grid-column:span 6; }
+    .risk-grid { grid-template-columns:1fr; }
   }
-  .market-bar .verdict .label { margin-bottom: 4px; }
-  .market-bar .verdict .value { font-size: 14px; line-height: 1.5; }
-  .tiers { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
-  .tier-card {
-    border: 1px solid; border-radius: 12px; padding: 20px;
-  }
-  .tier-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
-  .tier-icon { font-size: 20px; }
-  .tier-label { font-size: 20px; font-weight: 700; }
-  .tier-desc { font-size: 13px; color: var(--dim); flex: 1; }
-  .tier-count { font-size: 18px; font-weight: 700; }
-  .tier-note { font-size: 13px; color: var(--dim); margin-bottom: 12px; font-style: italic; }
-  .stock-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  .stock-table th { text-align: left; padding: 6px 8px; color: var(--dim); font-weight: 500; border-bottom: 1px solid var(--border); }
-  .stock-table td { padding: 6px 8px; border-bottom: 1px solid rgba(51,65,85,0.4); }
-  .stock-table .code { color: var(--accent); font-family: monospace; }
-  .stock-table .name { font-weight: 600; }
-  .stock-table .reason { color: var(--dim); max-width: 300px; }
-  .stock-table .tags { white-space: nowrap; }
-  .stock-chips { display: flex; flex-wrap: wrap; gap: 6px; }
-  .chip { background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 4px 10px; font-size: 13px; }
-  .section {
-    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
-    padding: 20px; margin-bottom: 16px;
-  }
-  .section h3 { font-size: 16px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-  .section ul { list-style: none; padding-left: 0; }
-  .section ul li { padding: 4px 0; font-size: 14px; }
-  .section ul li::before { content: "▸ "; color: var(--dim); }
-  .risk-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
-  .risk-item { background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.15); border-radius: 8px; padding: 12px; }
-  .risk-item .label { font-size: 12px; color: var(--dim); margin-bottom: 4px; }
-  .risk-item .value { font-size: 13px; }
-  .empty { color: var(--dim); font-style: italic; }
-  .footer { text-align: center; color: var(--dim); font-size: 12px; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border); }
-  @media (max-width: 768px) {
-    .tiers { grid-template-columns: 1fr; }
-    .risk-grid { grid-template-columns: 1fr; }
+  @media (max-width:500px) {
+    .span-3 { grid-column:span 12; }
+    .hero-stats { width:100%; }
+    .hero-stat { align-items:flex-start; }
   }
 </style>
 </head>
 <body>
-<div class="container">
-  <h1>🌊 波浪选股报告</h1>
-  <p class="subtitle">20260626 · 5 wave-reviewer agents 并行复审 (model=fast) + K线图(vision-bridge未启用) + 主 LLM gather</p>
-
-  <div class="market-bar">
-    <div class="item"><span class="label">上证指数</span><span class="value">上证</span></div>
-    <div class="item"><span class="label">MA20</span><span class="value">MA20</span></div>
-    <div class="item"><span class="label">MA60</span><span class="value">MA60</span></div>
-    <div class="item"><span class="label">5日涨幅</span><span class="value"></span></div>
-    <div class="verdict">
-      <span class="label">LLM 判定</span>
-      <span class="value">熊市（从昨日震荡偏强转为熊市，H20选股失效+H45防御逻辑激活）</span>
+<div class="bento">
+  <div class="card hero span-12">
+    <div>
+      <h1>🌊 波浪选股报告</h1>
+      <p class="subtitle">20260626 · 5 wave-reviewer agents 并行复审 (model=fast) + K线图(vision-bridge未启用) + 主 LLM gather</p>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat"><span class="lbl">上证</span><span class="val">上证</span></div>
+      <div class="hero-stat"><span class="lbl">MA20</span><span class="val">MA20</span></div>
+      <div class="hero-stat"><span class="lbl">MA60</span><span class="val">MA60</span></div>
+      <div class="hero-stat"><span class="lbl">5日</span><span class="val"></span></div>
     </div>
   </div>
 
-  <div class="tiers">
-    
-    <div class="tier-card" style="border-color:#22c55e;background:rgba(34,197,94,0.10)">
+  <div class="card verdict-card span-12">
+    <div class="verdict-label">🤖 LLM 综合判定</div>
+    <div class="verdict-text">熊市（从昨日震荡偏强转为熊市，H20选股失效+H45防御逻辑激活）</div>
+  </div>
+
+  
+    <div class="card tier-card span-6" style="background:linear-gradient(135deg, rgba(34,197,94,0.12), rgba(34,197,94,0.02))">
+      <div class="accent-bar" style="background:#22c55e"></div>
       <div class="tier-header">
-        <span class="tier-icon">🟢</span>
-        <span class="tier-label" style="color:#22c55e">A 档</span>
-        <span class="tier-desc">强烈推荐</span>
-        <span class="tier-count" style="color:#22c55e">0 只</span>
+        <div class="tier-badge" style="background:#22c55e20;color:#22c55e">A</div>
+        <span class="tier-label">强烈推荐</span>
+        <span class="tier-count" style="color:#22c55e;background:#22c55e15">0 只</span>
       </div>
-      <p class="tier-note">连续五日0只A档。市场转熊，宁缺毋滥。</p>
+      <div class="tier-note">连续五日0只A档。市场转熊，宁缺毋滥。</div>
       <p class="empty">无</p>
     </div>
-    <div class="tier-card" style="border-color:#eab308;background:rgba(234,179,8,0.10)">
+    <div class="card tier-card span-6" style="background:linear-gradient(135deg, rgba(234,179,8,0.12), rgba(234,179,8,0.02))">
+      <div class="accent-bar" style="background:#eab308"></div>
       <div class="tier-header">
-        <span class="tier-icon">🟡</span>
-        <span class="tier-label" style="color:#eab308">B 档</span>
-        <span class="tier-desc">可关注</span>
-        <span class="tier-count" style="color:#eab308">1 只</span>
+        <div class="tier-badge" style="background:#eab30820;color:#eab308">B</div>
+        <span class="tier-label">可关注</span>
+        <span class="tier-count" style="color:#eab308;background:#eab30815">1 只</span>
       </div>
       
       
       <table class="stock-table">
-        <thead><tr><th>#</th><th>代码</th><th>名称</th><th>PE</th><th>市值(亿)</th><th>核心理由</th><th>消息面</th></tr></thead>
+        <thead><tr><th>#</th><th>代码</th><th>名称</th><th>PE</th><th>市值</th><th>核心理由</th><th>消息面</th></tr></thead>
         <tbody>
         <tr>
           <td>6</td>
@@ -121,42 +160,41 @@
         </tbody>
       </table>
     </div>
-    <div class="tier-card" style="border-color:#94a3b8;background:rgba(148,163,184,0.10)">
+    <div class="card tier-card span-6" style="background:linear-gradient(135deg, rgba(148,163,184,0.12), rgba(148,163,184,0.02))">
+      <div class="accent-bar" style="background:#94a3b8"></div>
       <div class="tier-header">
-        <span class="tier-icon">⚪</span>
-        <span class="tier-label" style="color:#94a3b8">C 档</span>
-        <span class="tier-desc">观望</span>
-        <span class="tier-count" style="color:#94a3b8">12 只</span>
+        <div class="tier-badge" style="background:#94a3b820;color:#94a3b8">C</div>
+        <span class="tier-label">观望</span>
+        <span class="tier-count" style="color:#94a3b8;background:#94a3b815">12 只</span>
       </div>
       
       <div class="stock-chips"><span class="chip">山煤国际(昨B降C)</span><span class="chip">浙能电力(昨B降C)</span><span class="chip">比音勒芬(昨B降C)</span><span class="chip">金螳螂</span><span class="chip">合百集团</span><span class="chip">恒林股份(昨B降C)</span><span class="chip">威迈斯</span><span class="chip">热威股份</span><span class="chip">誉衡药业(昨B降C)</span><span class="chip">瑞晨环保</span><span class="chip">海信家电(H46争议)</span><span class="chip">美的集团(昨B降C)</span></div>
     </div>
-    <div class="tier-card" style="border-color:#ef4444;background:rgba(239,68,68,0.10)">
+    <div class="card tier-card span-6" style="background:linear-gradient(135deg, rgba(239,68,68,0.12), rgba(239,68,68,0.02))">
+      <div class="accent-bar" style="background:#ef4444"></div>
       <div class="tier-header">
-        <span class="tier-icon">🔴</span>
-        <span class="tier-label" style="color:#ef4444">D 档</span>
-        <span class="tier-desc">回避</span>
-        <span class="tier-count" style="color:#ef4444">87 只</span>
+        <div class="tier-badge" style="background:#ef444420;color:#ef4444">D</div>
+        <span class="tier-label">回避</span>
+        <span class="tier-count" style="color:#ef4444;background:#ef444415">87 只</span>
       </div>
-      <p class="tier-note">D档87%。转熊后H20选股失效全面爆发：亏损股30+只、H28陷阱75%、H46触发5只、放量下跌40+只、减持/解禁/ST/财务造假密集</p>
+      <div class="tier-note">D档87%。转熊后H20选股失效全面爆发：亏损股30+只、H28陷阱75%、H46触发5只、放量下跌40+只、减持/解禁/ST/财务造假密集</div>
       <p class="empty">无</p>
     </div>
-  </div>
 
-  <div class="section">
-    <h3>⚠️ 风险概览</h3>
+  <div class="card span-12">
+    <div class="section-label">⚠️ 风险概览</div>
     <div class="risk-grid">
-      <div class="risk-item"><div class="label">H28 陷阱率</div><div class="value">75%+ 满足sell&gt;buy</div></div>
-      <div class="risk-item"><div class="label">消息面风险</div><div class="value">至少25只查出明确利空(减持/解禁/ST/财务造假/可转债强赎/跌停/诉讼)</div></div>
-      <div class="risk-item"><div class="label">整体评估</div><div class="value">市场转熊，H20选股失效。仅华能国际1只B档(防御)。建议空仓或极轻仓防御，等MA20重新站上MA60后再考虑加仓。</div></div>
+      <div class="risk-item"><div class="lbl">H28 陷阱率</div><div class="val">75%+ 满足sell&gt;buy</div></div>
+      <div class="risk-item"><div class="lbl">消息面风险</div><div class="val">至少25只查出明确利空(减持/解禁/ST/财务造假/可转债强赎/跌停/诉讼)</div></div>
+      <div class="risk-item"><div class="lbl">整体评估</div><div class="val">市场转熊，H20选股失效。仅华能国际1只B档(防御)。建议空仓或极轻仓防御，等MA20重新站上MA60后再考虑加仓。</div></div>
     </div>
   </div>
 
-  <div class="section"><h3>📋 逐日变化</h3><div class="change-group"><h4>vs_20260625</h4><ul><li>🔴 市场状态从震荡偏强转为熊市（MA20&lt;MA60）</li><li>D档 74%→87% 暴增，B档 9→1 崩塌，C档 17→12 缩小</li><li>昨日9只B档中8只降级：山煤国际/浙能电力/比音勒芬/誉衡药业/美的集团/恒林股份全降C，威迈斯/热威股份降C</li><li>唯一B档华能国际=熊市防御标的(H34大盘+H35电力+分红)</li><li>H20熊市选股失效再次验证：脚本仍推大量亏损/高位/题材股</li><li>第5组(81-100)100%全D档，TOP100尾部彻底失效</li><li>K线图已生成30张但vision-bridge未启用，agents无法读取PNG</li><li>THEORY.md凌晨被Loop审计修复7个问题(2轮迭代)</li></ul></div></div>
+  <div class="card span-12"><div class="section-label">📋 逐日变化</div><div class="change-group"><h4>vs_20260625</h4><ul><li>🔴 市场状态从震荡偏强转为熊市（MA20&lt;MA60）</li><li>D档 74%→87% 暴增，B档 9→1 崩塌，C档 17→12 缩小</li><li>昨日9只B档中8只降级：山煤国际/浙能电力/比音勒芬/誉衡药业/美的集团/恒林股份全降C，威迈斯/热威股份降C</li><li>唯一B档华能国际=熊市防御标的(H34大盘+H35电力+分红)</li><li>H20熊市选股失效再次验证：脚本仍推大量亏损/高位/题材股</li><li>第5组(81-100)100%全D档，TOP100尾部彻底失效</li><li>K线图已生成30张但vision-bridge未启用，agents无法读取PNG</li><li>THEORY.md凌晨被Loop审计修复7个问题(2轮迭代)</li></ul></div></div>
 
-  <div class="footer">
+  <div class="card footer-card span-12">
     以上分析仅供参考，不构成投资建议。股市有风险，投资需谨慎。<br>
-    Generated by stock-wave-analyzer · 2026-06-26 15:58
+    <a href="alpha.html">📈 查看 Alpha 追踪</a> · stock-wave-analyzer · 2026-06-28 21:08
   </div>
 </div>
 </body>
