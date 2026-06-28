@@ -17,8 +17,13 @@
   * { margin:0; padding:0; box-sizing:border-box; }
   body {
     font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,sans-serif;
-    background:var(--bg); background-image:radial-gradient(ellipse at top, rgba(14,165,233,0.04), transparent 60%);
-    color:var(--text); line-height:1.6; padding:24px; min-height:100vh;
+    background:var(--bg); color:var(--text); line-height:1.6; padding:24px; min-height:100vh;
+    position:relative;
+  }
+  body::before {
+    content:""; position:fixed; top:0; left:0; right:0; bottom:0; z-index:-1;
+    background:url('https://images.pexels.com/photos/3225517/pexels-photo-3225517.jpeg?auto=compress&w=1920') center/cover fixed;
+    opacity:0.05;
   }
   .bento { max-width:1200px; margin:0 auto; display:grid; grid-template-columns:repeat(12,1fr); gap:16px; }
   .card {
@@ -32,7 +37,11 @@
   .span-4 { grid-column:span 4; } .span-3 { grid-column:span 3; } .span-2 { grid-column:span 2; }
 
   /* Hero */
-  .hero { background:linear-gradient(135deg, rgba(14,165,233,0.06), rgba(99,102,241,0.03)); }
+  .hero { background:url('https://images.pexels.com/photos/3225517/pexels-photo-3225517.jpeg?auto=compress&w=1920') center/cover;
+    position:relative; border-color:#cbd5e1; }
+  .hero::after { content:""; position:absolute; inset:0; border-radius:inherit;
+    background:linear-gradient(135deg, rgba(255,255,255,0.88), rgba(255,255,255,0.78)); }
+  .hero > * { position:relative; z-index:1; }
   .hero h1 { font-size:28px; font-weight:800; letter-spacing:-0.5px; }
   .hero .subtitle { color:var(--dim); font-size:13px; margin-top:4px; }
 
