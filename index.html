@@ -6,36 +6,35 @@
 <title>波浪选股报告 20260626</title>
 <style>
   :root {
-    --bg:#080d1a; --bg2:#0f1629; --card:rgba(22,32,52,0.6); --card-hover:rgba(28,40,64,0.8);
-    --border:rgba(148,163,184,0.08); --border-hover:rgba(56,189,248,0.25);
-    --text:#e2e8f0; --dim:#64748b; --dim2:#475569;
-    --accent:#38bdf8; --accent2:#818cf8;
-    --pos:#22c55e; --neg:#ef4444;
-    --shadow:0 4px 24px rgba(0,0,0,0.25); --shadow-hover:0 8px 40px rgba(0,0,0,0.35);
-    --radius:20px; --radius-sm:12px;
+    --bg:#f0f2f5; --bg2:#e8ebf0; --card:#ffffff; --card-hover:#f8fafc;
+    --border:#e2e8f0; --border-hover:#cbd5e1;
+    --text:#1e293b; --dim:#64748b; --dim2:#94a3b8;
+    --accent:#0ea5e9; --accent2:#6366f1;
+    --pos:#16a34a; --neg:#dc2626;
+    --shadow:0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04); --shadow-hover:0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+    --radius:16px; --radius-sm:10px;
   }
   * { margin:0; padding:0; box-sizing:border-box; }
   body {
     font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,sans-serif;
-    background:var(--bg); background-image:radial-gradient(ellipse at top, rgba(56,189,248,0.06), transparent 60%);
+    background:var(--bg); background-image:radial-gradient(ellipse at top, rgba(14,165,233,0.04), transparent 60%);
     color:var(--text); line-height:1.6; padding:24px; min-height:100vh;
   }
   .bento { max-width:1200px; margin:0 auto; display:grid; grid-template-columns:repeat(12,1fr); gap:16px; }
   .card {
-    background:var(--card); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
-    border:1px solid var(--border); border-radius:var(--radius); padding:24px;
-    box-shadow:var(--shadow); transition:all 0.3s cubic-bezier(0.4,0,0.2,1); position:relative; overflow:hidden;
+    background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:24px;
+    box-shadow:var(--shadow); transition:all 0.25s cubic-bezier(0.4,0,0.2,1); position:relative; overflow:hidden;
   }
   .card:hover { background:var(--card-hover); border-color:var(--border-hover); box-shadow:var(--shadow-hover); transform:translateY(-2px); }
   .card::before { content:""; position:absolute; top:0; left:0; right:0; height:1px;
-    background:linear-gradient(90deg, transparent, rgba(56,189,248,0.3), transparent); opacity:0.5; }
+    background:linear-gradient(90deg, transparent, rgba(14,165,233,0.2), transparent); opacity:0.6; }
   .span-12 { grid-column:span 12; } .span-8 { grid-column:span 8; }
   .span-6 { grid-column:span 6; } .span-4 { grid-column:span 4; }
   .span-3 { grid-column:span 3; }
 
   /* Hero */
   .hero { display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:16px;
-    background:linear-gradient(135deg, rgba(56,189,248,0.08), rgba(129,140,248,0.05)); }
+    background:linear-gradient(135deg, rgba(14,165,233,0.06), rgba(99,102,241,0.03)); }
   .hero h1 { font-size:28px; font-weight:800; letter-spacing:-0.5px; }
   .hero .subtitle { color:var(--dim); font-size:13px; margin-top:4px; }
   .hero-stats { display:flex; gap:24px; flex-wrap:wrap; }
@@ -44,7 +43,7 @@
   .hero-stat .val { font-size:20px; font-weight:700; }
 
   /* Verdict */
-  .verdict-card { background:linear-gradient(135deg, rgba(56,189,248,0.06), rgba(129,140,248,0.03)); }
+  .verdict-card { background:linear-gradient(135deg, rgba(14,165,233,0.04), rgba(99,102,241,0.02)); }
   .verdict-label { font-size:12px; color:var(--accent); font-weight:600; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px; }
   .verdict-text { font-size:15px; line-height:1.7; }
 
@@ -65,7 +64,7 @@
     text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid var(--border); }
   .stock-table td { padding:8px 10px; border-bottom:1px solid rgba(148,163,184,0.06); }
   .stock-table tr:last-child td { border-bottom:none; }
-  .stock-table tr:hover td { background:rgba(56,189,248,0.04); }
+  .stock-table tr:hover td { background:rgba(14,165,233,0.03); }
   .stock-table .code { color:var(--accent); font-family:"SF Mono",monospace; font-size:12px; }
   .stock-table .name { font-weight:600; }
   .stock-table .reason { color:var(--dim); max-width:260px; font-size:12px; }
@@ -194,7 +193,7 @@
 
   <div class="card footer-card span-12">
     以上分析仅供参考，不构成投资建议。股市有风险，投资需谨慎。<br>
-    <a href="alpha.html">📈 查看 Alpha 追踪</a> · stock-wave-analyzer · 2026-06-28 21:08
+    <a href="alpha.html">📈 查看 Alpha 追踪</a> · stock-wave-analyzer · 2026-06-28 21:32
   </div>
 </div>
 </body>
