@@ -157,8 +157,69 @@
     .mood-layout { grid-template-columns:1fr; }
   }
 </style>
+<style>
+  .sidebar {
+    position: fixed; left: 0; top: 0; bottom: 0; width: 220px; z-index: 100;
+    background: linear-gradient(180deg, rgba(255,255,255,0.97), rgba(248,251,247,0.95));
+    border-right: 1px solid var(--line); overflow-y: auto; padding: 0 0 20px;
+    transition: transform 0.25s ease;
+  }
+  .sidebar-header {
+    display: flex; align-items: center; gap: 10px;
+    padding: 20px 20px 16px; border-bottom: 1px solid var(--line);
+  }
+  .sidebar-logo { font-size: 22px; }
+  .sidebar-title { font-size: 15px; font-weight: 850; color: var(--text); }
+  .sidebar-nav { padding: 10px 0; }
+  .nav-item {
+    display: flex; align-items: center; gap: 8px; padding: 9px 20px;
+    color: var(--muted); text-decoration: none; font-size: 13px; font-weight: 650;
+    transition: all 0.15s ease;
+  }
+  .nav-item:hover { background: rgba(22,138,70,0.06); color: var(--text); }
+  .nav-item.active {
+    color: var(--green); background: rgba(22,138,70,0.08);
+    border-left: 3px solid var(--green); padding-left: 17px; font-weight: 800;
+  }
+  .nav-group { margin-top: 8px; }
+  .nav-group-title {
+    padding: 8px 20px 4px; color: var(--dim); font-size: 11px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .sidebar-toggle {
+    display: none; position: fixed; left: 16px; top: 16px; z-index: 101;
+    width: 40px; height: 40px; border: 1px solid var(--line); border-radius: 8px;
+    background: rgba(255,255,255,0.92); font-size: 18px; cursor: pointer;
+    align-items: center; justify-content: center;
+  }
+  body { padding-left: 220px; }
+  @media (max-width: 768px) {
+    .sidebar { transform: translateX(-100%); }
+    .sidebar.open { transform: translateX(0); }
+    .sidebar-toggle { display: flex; }
+    body { padding-left: 0; }
+  }
+</style>
 </head>
 <body>
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <span class="sidebar-logo">🌊</span>
+    <span class="sidebar-title">波浪选股</span>
+  </div>
+  <nav class="sidebar-nav">
+    <a href="alpha.html" class="nav-item ">📊 Alpha 追踪</a>
+    <div class="nav-group">
+      <div class="nav-group-title">每日报告</div>
+      <a href="report_20260629.html" class="nav-item active">📅 06-29</a>
+      <a href="report_20260626.html" class="nav-item ">📅 06-26</a>
+      <a href="report_20260625.html" class="nav-item ">📅 06-25</a>
+      <a href="report_20260624.html" class="nav-item ">📅 06-24</a>
+      <a href="report_20260623.html" class="nav-item ">📅 06-23</a>
+    </div>
+  </nav>
+</aside>
+<button class="sidebar-toggle" id="sidebarToggle" aria-label="菜单">☰</button>
 <div class="bento">
   <div class="card hero span-12">
     <div>
@@ -1195,7 +1256,7 @@
 
   <div class="card footer-card span-12">
     以上分析仅供参考，不构成投资建议。股市有风险，投资需谨慎。<br>
-    <a href="alpha.html">📈 查看 Alpha 追踪</a> · stock-wave-analyzer · 2026-06-29 22:04
+    <a href="alpha.html">📈 查看 Alpha 追踪</a> · stock-wave-analyzer · 2026-06-29 23:09
   </div>
 </div>
 <script>
@@ -1220,6 +1281,11 @@
       })
       .catch(() => loadImage(fallback));
   })();
+</script>
+<script>
+  document.getElementById('sidebarToggle')?.addEventListener('click', () => {
+    document.getElementById('sidebar')?.classList.toggle('open');
+  });
 </script>
 </body>
 </html>

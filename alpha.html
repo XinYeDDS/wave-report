@@ -225,8 +225,69 @@
     .filter-btn { flex:1 0 auto; }
   }
 </style>
+<style>
+  .sidebar {
+    position: fixed; left: 0; top: 0; bottom: 0; width: 220px; z-index: 100;
+    background: linear-gradient(180deg, rgba(255,255,255,0.97), rgba(248,251,247,0.95));
+    border-right: 1px solid var(--line); overflow-y: auto; padding: 0 0 20px;
+    transition: transform 0.25s ease;
+  }
+  .sidebar-header {
+    display: flex; align-items: center; gap: 10px;
+    padding: 20px 20px 16px; border-bottom: 1px solid var(--line);
+  }
+  .sidebar-logo { font-size: 22px; }
+  .sidebar-title { font-size: 15px; font-weight: 850; color: var(--text); }
+  .sidebar-nav { padding: 10px 0; }
+  .nav-item {
+    display: flex; align-items: center; gap: 8px; padding: 9px 20px;
+    color: var(--muted); text-decoration: none; font-size: 13px; font-weight: 650;
+    transition: all 0.15s ease;
+  }
+  .nav-item:hover { background: rgba(22,138,70,0.06); color: var(--text); }
+  .nav-item.active {
+    color: var(--green); background: rgba(22,138,70,0.08);
+    border-left: 3px solid var(--green); padding-left: 17px; font-weight: 800;
+  }
+  .nav-group { margin-top: 8px; }
+  .nav-group-title {
+    padding: 8px 20px 4px; color: var(--dim); font-size: 11px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .sidebar-toggle {
+    display: none; position: fixed; left: 16px; top: 16px; z-index: 101;
+    width: 40px; height: 40px; border: 1px solid var(--line); border-radius: 8px;
+    background: rgba(255,255,255,0.92); font-size: 18px; cursor: pointer;
+    align-items: center; justify-content: center;
+  }
+  body { padding-left: 220px; }
+  @media (max-width: 768px) {
+    .sidebar { transform: translateX(-100%); }
+    .sidebar.open { transform: translateX(0); }
+    .sidebar-toggle { display: flex; }
+    body { padding-left: 0; }
+  }
+</style>
 </head>
 <body>
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <span class="sidebar-logo">🌊</span>
+    <span class="sidebar-title">波浪选股</span>
+  </div>
+  <nav class="sidebar-nav">
+    <a href="alpha.html" class="nav-item active">📊 Alpha 追踪</a>
+    <div class="nav-group">
+      <div class="nav-group-title">每日报告</div>
+      <a href="report_20260629.html" class="nav-item ">📅 06-29</a>
+      <a href="report_20260626.html" class="nav-item ">📅 06-26</a>
+      <a href="report_20260625.html" class="nav-item ">📅 06-25</a>
+      <a href="report_20260624.html" class="nav-item ">📅 06-24</a>
+      <a href="report_20260623.html" class="nav-item ">📅 06-23</a>
+    </div>
+  </nav>
+</aside>
+<button class="sidebar-toggle" id="sidebarToggle" aria-label="菜单">☰</button>
 <main class="deck">
   <section class="panel hero span-12">
     <div>
@@ -235,8 +296,8 @@
       <p class="subtitle">最近 30 天 A/B 档推荐收益追踪 · 更新于 2026-06-29。把脚本初筛和 LLM 分档后的结果压成一张可复盘的收益磁带。</p>
       <div class="hero-meta">
         <span class="meta-pill">样本 <strong>31</strong></span>
-        <span class="meta-pill">胜率 <strong class="neg">25.8%</strong></span>
-        <span class="meta-pill">平均收益 <strong class="neg">-2.61%</strong></span>
+        <span class="meta-pill">胜率 <strong class="neg">19.4%</strong></span>
+        <span class="meta-pill">平均收益 <strong class="neg">-3.48%</strong></span>
         <span class="meta-pill">平均 Alpha <strong class="neutral">+0.00%</strong></span>
       </div>
     </div>
@@ -253,7 +314,7 @@
         <polyline class="chart-line" points="0,42 42,63 84,36 126,72 168,58 210,85 252,78 294,92 336,66 378,98 420,89"></polyline>
       </svg>
       <div class="signal-foot">
-        <span>BEST<strong class="pos">合百集团 (+8.04%)</strong></span>
+        <span>BEST<strong class="pos">合百集团 (+3.49%)</strong></span>
         <span>WORST<strong class="neg">山煤国际 (-10.53%)</strong></span>
         <span>STATE<strong class="neutral">低胜率回测</strong></span>
       </div>
@@ -267,12 +328,12 @@
   </section>
   <section class="metric-card bad span-2">
     <div class="label">胜率</div>
-    <div class="value neg">25.8%</div>
+    <div class="value neg">19.4%</div>
     <div class="sub">正收益占比</div>
   </section>
   <section class="metric-card bad span-2">
     <div class="label">平均收益</div>
-    <div class="value neg">-2.61%</div>
+    <div class="value neg">-3.48%</div>
     <div class="sub">当前样本均值</div>
   </section>
   <section class="metric-card span-2">
@@ -282,7 +343,7 @@
   </section>
   <section class="metric-card good span-2">
     <div class="label">最佳</div>
-    <div class="value pos">+8.04%</div>
+    <div class="value pos">+3.49%</div>
     <div class="sub">合百集团</div>
   </section>
   <section class="metric-card bad span-2">
@@ -297,15 +358,15 @@
         <div class="section-kicker">REVIEW THEATER</div>
         <h2>复盘剧场</h2>
       </div>
-      <div class="count-pill">胜率 25.8% · 防守压力 74%</div>
+      <div class="count-pill">胜率 19.4% · 防守压力 81%</div>
     </div>
     <div class="story-grid">
       <article class="story-card">
         <div class="story-title">市场心情：防守模式</div>
         <p class="story-copy">A/B 档样本没有扩散出赚钱效应，系统现在更像风控雷达，而不是进攻号角。</p>
         <div class="mood-layout">
-          <div class="mood-dial" style="--pressure:74%;">
-            <div><strong>74</strong><span>PRESSURE</span></div>
+          <div class="mood-dial" style="--pressure:81%;">
+            <div><strong>81</strong><span>PRESSURE</span></div>
           </div>
           <div><div class="mood-tags"><span>A档稀缺</span><span>低胜率回测</span><span>防御优先</span></div></div>
         </div>
@@ -316,7 +377,7 @@
         <div class="duel-grid">
           <div class="duel-item">
             <div class="duel-label">WINNER</div>
-            <strong class="pos">+8.04%</strong>
+            <strong class="pos">+3.49%</strong>
             <div class="duel-name">合百集团</div>
           </div>
           <div class="duel-item">
@@ -329,7 +390,7 @@
       <article class="story-card">
         <div class="story-title">收益热力带</div>
         <p class="story-copy">绿色稀少、深红集中，说明 A/B 样本里回撤比反弹更有存在感。</p>
-        <div class="heat-tape" aria-label="A/B档收益热力带"><span class="heat-cell loss-soft" title="华能国际 600011 -3.11%">-3.1</span><span class="heat-cell loss-soft" title="长江电力 600900 +0.00%">+0.0</span><span class="heat-cell loss-soft" title="海信家电 000921 +0.00%">+0.0</span><span class="heat-cell loss-soft" title="华能国际 600011 -3.11%">-3.1</span><span class="heat-cell loss-deep" title="山煤国际 600546 -10.53%">-10.5</span><span class="heat-cell loss-soft" title="浙能电力 600023 -0.38%">-0.4</span><span class="heat-cell loss" title="比音勒芬 002832 -4.17%">-4.2</span><span class="heat-cell win" title="合百集团 000417 +8.04%">+8.0</span><span class="heat-cell win" title="威迈斯 688612 +0.24%">+0.2</span><span class="heat-cell win" title="誉衡药业 002437 +3.49%">+3.5</span><span class="heat-cell loss-soft" title="热威股份 603075 -1.04%">-1.0</span><span class="heat-cell win" title="美的集团 000333 +1.01%">+1.0</span><span class="heat-cell loss-soft" title="浙商中拓 000906 -1.90%">-1.9</span><span class="heat-cell loss-deep" title="山煤国际 600546 -10.53%">-10.5</span><span class="heat-cell loss-soft" title="浙能电力 600023 -0.38%">-0.4</span><span class="heat-cell loss" title="比音勒芬 002832 -4.17%">-4.2</span><span class="heat-cell win" title="合百集团 000417 +8.04%">+8.0</span><span class="heat-cell win" title="威迈斯 688612 +0.24%">+0.2</span><span class="heat-cell win" title="誉衡药业 002437 +3.49%">+3.5</span><span class="heat-cell loss-soft" title="热威股份 603075 -1.04%">-1.0</span><span class="heat-cell win" title="美的集团 000333 +1.01%">+1.0</span><span class="heat-cell loss-soft" title="浙商中拓 000906 -1.90%">-1.9</span><span class="heat-cell loss-deep" title="泓淋电力 301439 -10.32%">-10.3</span><span class="heat-cell loss" title="比音勒芬 002832 -4.17%">-4.2</span><span class="heat-cell loss-deep" title="山煤国际 600546 -10.53%">-10.5</span><span class="heat-cell loss" title="中国船舶 600150 -6.20%">-6.2</span><span class="heat-cell loss" title="桂冠电力 600236 -4.74%">-4.7</span><span class="heat-cell loss-deep" title="泓淋电力 301439 -10.32%">-10.3</span><span class="heat-cell loss-soft" title="华能国际 600011 -3.11%">-3.1</span><span class="heat-cell loss" title="比音勒芬 002832 -4.17%">-4.2</span><span class="heat-cell loss-deep" title="山煤国际 600546 -10.53%">-10.5</span></div>
+        <div class="heat-tape" aria-label="A/B档收益热力带"><span class="heat-cell loss-soft" title="华能国际 600011 -3.11%">-3.1</span><span class="heat-cell loss-soft" title="长江电力 600900 +0.00%">+0.0</span><span class="heat-cell loss-soft" title="海信家电 000921 +0.00%">+0.0</span><span class="heat-cell loss-soft" title="华能国际 600011 -3.11%">-3.1</span><span class="heat-cell loss-deep" title="山煤国际 600546 -10.53%">-10.5</span><span class="heat-cell loss-soft" title="浙能电力 600023 -2.22%">-2.2</span><span class="heat-cell loss" title="比音勒芬 002832 -4.17%">-4.2</span><span class="heat-cell win" title="合百集团 000417 +3.49%">+3.5</span><span class="heat-cell loss-soft" title="威迈斯 688612 -2.34%">-2.3</span><span class="heat-cell win" title="誉衡药业 002437 +0.75%">+0.8</span><span class="heat-cell loss-soft" title="热威股份 603075 -1.48%">-1.5</span><span class="heat-cell win" title="美的集团 000333 +0.84%">+0.8</span><span class="heat-cell loss-soft" title="浙商中拓 000906 -3.20%">-3.2</span><span class="heat-cell loss-deep" title="山煤国际 600546 -10.53%">-10.5</span><span class="heat-cell loss-soft" title="浙能电力 600023 -2.22%">-2.2</span><span class="heat-cell loss" title="比音勒芬 002832 -4.17%">-4.2</span><span class="heat-cell win" title="合百集团 000417 +3.49%">+3.5</span><span class="heat-cell loss-soft" title="威迈斯 688612 -2.34%">-2.3</span><span class="heat-cell win" title="誉衡药业 002437 +0.75%">+0.8</span><span class="heat-cell loss-soft" title="热威股份 603075 -1.48%">-1.5</span><span class="heat-cell win" title="美的集团 000333 +0.84%">+0.8</span><span class="heat-cell loss-soft" title="浙商中拓 000906 -3.20%">-3.2</span><span class="heat-cell loss-deep" title="泓淋电力 301439 -10.32%">-10.3</span><span class="heat-cell loss" title="比音勒芬 002832 -4.17%">-4.2</span><span class="heat-cell loss-deep" title="山煤国际 600546 -10.53%">-10.5</span><span class="heat-cell loss" title="中国船舶 600150 -6.20%">-6.2</span><span class="heat-cell loss" title="桂冠电力 600236 -4.74%">-4.7</span><span class="heat-cell loss-deep" title="泓淋电力 301439 -10.32%">-10.3</span><span class="heat-cell loss-soft" title="华能国际 600011 -3.11%">-3.1</span><span class="heat-cell loss" title="比音勒芬 002832 -4.17%">-4.2</span><span class="heat-cell loss-deep" title="山煤国际 600546 -10.53%">-10.5</span></div>
         <div class="heat-note">红色密度偏高，说明这批推荐更适合拿来校准模型，而不是盲目放大仓位。</div>
       </article>
     </div>
@@ -341,7 +402,7 @@
         <div class="section-kicker">TIER TIMELINE</div>
         <h2>分档轨迹</h2>
       </div>
-      <div class="count-pill">5 个交易快照</div>
+      <div class="count-pill">6 个交易快照</div>
     </div>
     <div class="days-strip">
       <div class="day-card">
@@ -364,6 +425,15 @@
       </div>
       <div class="day-card">
         <span class="day-date">20260625</span>
+        <div class="tier-row">
+          <span class="tier-badge a">A 0</span>
+          <span class="tier-badge b">B 9</span>
+          <span class="tier-badge c">C 17</span>
+          <span class="tier-badge d">D 74</span>
+        </div>
+      </div>
+      <div class="day-card">
+        <span class="day-date">20260624</span>
         <div class="tier-row">
           <span class="tier-badge a">A 0</span>
           <span class="tier-badge b">B 9</span>
@@ -474,9 +544,9 @@
           <td class="tier b">B</td>
           <td class="code">600023</td>
           <td class="name">浙能电力</td>
-          <td>5.30</td>
+          <td>5.40</td>
           <td>5.28</td>
-          <td class="neg">-0.38%</td>
+          <td class="neg">-2.22%</td>
           <td class="">—</td>
           <td>4</td>
         </tr>        <tr>
@@ -494,9 +564,9 @@
           <td class="tier b">B</td>
           <td class="code">000417</td>
           <td class="name">合百集团</td>
-          <td>7.96</td>
+          <td>8.31</td>
           <td>8.60</td>
-          <td class="pos">+8.04%</td>
+          <td class="pos">+3.49%</td>
           <td class="">—</td>
           <td>4</td>
         </tr>        <tr>
@@ -504,9 +574,9 @@
           <td class="tier b">B</td>
           <td class="code">688612</td>
           <td class="name">威迈斯</td>
-          <td>28.67</td>
+          <td>29.43</td>
           <td>28.74</td>
-          <td class="pos">+0.24%</td>
+          <td class="neg">-2.34%</td>
           <td class="">—</td>
           <td>4</td>
         </tr>        <tr>
@@ -514,9 +584,9 @@
           <td class="tier b">B</td>
           <td class="code">002437</td>
           <td class="name">誉衡药业</td>
-          <td>2.58</td>
+          <td>2.65</td>
           <td>2.67</td>
-          <td class="pos">+3.49%</td>
+          <td class="pos">+0.75%</td>
           <td class="">—</td>
           <td>4</td>
         </tr>        <tr>
@@ -524,9 +594,9 @@
           <td class="tier b">B</td>
           <td class="code">603075</td>
           <td class="name">热威股份</td>
-          <td>22.17</td>
+          <td>22.27</td>
           <td>21.94</td>
-          <td class="neg">-1.04%</td>
+          <td class="neg">-1.48%</td>
           <td class="">—</td>
           <td>4</td>
         </tr>        <tr>
@@ -534,9 +604,9 @@
           <td class="tier b">B</td>
           <td class="code">000333</td>
           <td class="name">美的集团</td>
-          <td>76.50</td>
+          <td>76.63</td>
           <td>77.27</td>
-          <td class="pos">+1.01%</td>
+          <td class="pos">+0.84%</td>
           <td class="">—</td>
           <td>4</td>
         </tr>        <tr>
@@ -544,13 +614,13 @@
           <td class="tier b">B</td>
           <td class="code">000906</td>
           <td class="name">浙商中拓</td>
-          <td>5.25</td>
+          <td>5.32</td>
           <td>5.15</td>
-          <td class="neg">-1.90%</td>
+          <td class="neg">-3.20%</td>
           <td class="">—</td>
           <td>4</td>
         </tr>        <tr>
-          <td class="date">20260625</td>
+          <td class="date">20260624</td>
           <td class="tier b">B</td>
           <td class="code">600546</td>
           <td class="name">山煤国际</td>
@@ -558,19 +628,19 @@
           <td>11.21</td>
           <td class="neg">-10.53%</td>
           <td class="">—</td>
-          <td>4</td>
+          <td>5</td>
         </tr>        <tr>
-          <td class="date">20260625</td>
+          <td class="date">20260624</td>
           <td class="tier b">B</td>
           <td class="code">600023</td>
           <td class="name">浙能电力</td>
-          <td>5.30</td>
+          <td>5.40</td>
           <td>5.28</td>
-          <td class="neg">-0.38%</td>
+          <td class="neg">-2.22%</td>
           <td class="">—</td>
-          <td>4</td>
+          <td>5</td>
         </tr>        <tr>
-          <td class="date">20260625</td>
+          <td class="date">20260624</td>
           <td class="tier b">B</td>
           <td class="code">002832</td>
           <td class="name">比音勒芬</td>
@@ -578,67 +648,67 @@
           <td>20.69</td>
           <td class="neg">-4.17%</td>
           <td class="">—</td>
-          <td>4</td>
+          <td>5</td>
         </tr>        <tr>
-          <td class="date">20260625</td>
+          <td class="date">20260624</td>
           <td class="tier b">B</td>
           <td class="code">000417</td>
           <td class="name">合百集团</td>
-          <td>7.96</td>
+          <td>8.31</td>
           <td>8.60</td>
-          <td class="pos">+8.04%</td>
+          <td class="pos">+3.49%</td>
           <td class="">—</td>
-          <td>4</td>
+          <td>5</td>
         </tr>        <tr>
-          <td class="date">20260625</td>
+          <td class="date">20260624</td>
           <td class="tier b">B</td>
           <td class="code">688612</td>
           <td class="name">威迈斯</td>
-          <td>28.67</td>
+          <td>29.43</td>
           <td>28.74</td>
-          <td class="pos">+0.24%</td>
+          <td class="neg">-2.34%</td>
           <td class="">—</td>
-          <td>4</td>
+          <td>5</td>
         </tr>        <tr>
-          <td class="date">20260625</td>
+          <td class="date">20260624</td>
           <td class="tier b">B</td>
           <td class="code">002437</td>
           <td class="name">誉衡药业</td>
-          <td>2.58</td>
+          <td>2.65</td>
           <td>2.67</td>
-          <td class="pos">+3.49%</td>
+          <td class="pos">+0.75%</td>
           <td class="">—</td>
-          <td>4</td>
+          <td>5</td>
         </tr>        <tr>
-          <td class="date">20260625</td>
+          <td class="date">20260624</td>
           <td class="tier b">B</td>
           <td class="code">603075</td>
           <td class="name">热威股份</td>
-          <td>22.17</td>
+          <td>22.27</td>
           <td>21.94</td>
-          <td class="neg">-1.04%</td>
+          <td class="neg">-1.48%</td>
           <td class="">—</td>
-          <td>4</td>
+          <td>5</td>
         </tr>        <tr>
-          <td class="date">20260625</td>
+          <td class="date">20260624</td>
           <td class="tier b">B</td>
           <td class="code">000333</td>
           <td class="name">美的集团</td>
-          <td>76.50</td>
+          <td>76.63</td>
           <td>77.27</td>
-          <td class="pos">+1.01%</td>
+          <td class="pos">+0.84%</td>
           <td class="">—</td>
-          <td>4</td>
+          <td>5</td>
         </tr>        <tr>
-          <td class="date">20260625</td>
+          <td class="date">20260624</td>
           <td class="tier b">B</td>
           <td class="code">000906</td>
           <td class="name">浙商中拓</td>
-          <td>5.25</td>
+          <td>5.32</td>
           <td>5.15</td>
-          <td class="neg">-1.90%</td>
+          <td class="neg">-3.20%</td>
           <td class="">—</td>
-          <td>4</td>
+          <td>5</td>
         </tr>        <tr>
           <td class="date">20260623</td>
           <td class="tier b">B</td>
@@ -818,6 +888,11 @@
     sorter.addEventListener("change", sortRows);
     applyFilters();
   })();
+</script>
+<script>
+  document.getElementById('sidebarToggle')?.addEventListener('click', () => {
+    document.getElementById('sidebar')?.classList.toggle('open');
+  });
 </script>
 </body>
 </html>
