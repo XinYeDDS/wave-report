@@ -6,82 +6,129 @@
 <title>波浪选股报告 20260626</title>
 <style>
   :root {
-    --bg:#f0f2f5; --bg2:#e8ebf0; --card:#ffffff; --card-hover:#f8fafc;
-    --border:#e2e8f0; --border-hover:#cbd5e1;
-    --text:#1e293b; --dim:#64748b; --dim2:#94a3b8;
-    --accent:#0ea5e9; --accent2:#6366f1;
-    --pos:#16a34a; --neg:#dc2626;
-    --shadow:0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04); --shadow-hover:0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
-    --radius:16px; --radius-sm:10px;
+    --bg:#f2f5f1; --card:#ffffff; --card-hover:#fbfdfb;
+    --border:#d8e2d7; --border-hover:#c6d4c4;
+    --text:#172316; --dim:#5d6f5c; --dim2:#879485;
+    --accent:#168a46; --accent2:#0e8f83;
+    --pos:#168a46; --neg:#d85454; --warn:#b87916;
+    --shadow:0 18px 45px rgba(52,76,55,0.12);
+    --shadow-hover:0 22px 52px rgba(52,76,55,0.16);
+    --radius:8px; --radius-sm:8px;
   }
   * { margin:0; padding:0; box-sizing:border-box; }
+  html { background:var(--bg); }
   body {
-    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,sans-serif;
-    background:var(--bg); background-image:radial-gradient(ellipse at top, rgba(14,165,233,0.04), transparent 60%);
-    color:var(--text); line-height:1.6; padding:24px; min-height:100vh;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",Roboto,sans-serif;
+    color:var(--text); line-height:1.6; padding:28px; min-height:100vh;
+    position:relative;
+    background:
+      linear-gradient(135deg, rgba(255,255,255,0.92), rgba(241,247,241,0.84) 42%, rgba(232,240,231,0.9)),
+      url('https://images.pexels.com/photos/417073/pexels-photo-417073.jpeg?auto=compress&w=1920') center/cover fixed;
   }
-  .bento { max-width:1200px; margin:0 auto; display:grid; grid-template-columns:repeat(12,1fr); gap:16px; }
+  body::before {
+    content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
+    background:
+      linear-gradient(rgba(28,54,31,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(28,54,31,0.04) 1px, transparent 1px);
+    background-size:44px 44px;
+    mask-image:linear-gradient(to bottom, rgba(28,54,31,0.55), transparent 78%);
+  }
+  .bento { max-width:1240px; margin:0 auto; display:grid; grid-template-columns:repeat(12,1fr); gap:14px; }
   .card {
-    background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:24px;
+    background:linear-gradient(180deg, rgba(255,255,255,0.96), rgba(248,251,247,0.94));
+    border:1px solid var(--border); border-radius:var(--radius); padding:22px;
     box-shadow:var(--shadow); transition:all 0.25s cubic-bezier(0.4,0,0.2,1); position:relative; overflow:hidden;
   }
   .card:hover { background:var(--card-hover); border-color:var(--border-hover); box-shadow:var(--shadow-hover); transform:translateY(-2px); }
   .card::before { content:""; position:absolute; top:0; left:0; right:0; height:1px;
-    background:linear-gradient(90deg, transparent, rgba(14,165,233,0.2), transparent); opacity:0.6; }
+    background:linear-gradient(90deg, transparent, rgba(22,138,70,0.35), rgba(14,143,131,0.22), transparent); opacity:0.85; }
   .span-12 { grid-column:span 12; } .span-8 { grid-column:span 8; }
   .span-6 { grid-column:span 6; } .span-4 { grid-column:span 4; }
   .span-3 { grid-column:span 3; }
 
   /* Hero */
-  .hero { display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:16px;
-    background:linear-gradient(135deg, rgba(14,165,233,0.06), rgba(99,102,241,0.03));
+  .hero {
+    min-height:220px; display:grid; grid-template-columns:minmax(0,1fr) auto; gap:28px; align-items:start;
+    background:
+      linear-gradient(105deg, rgba(255,255,255,0.94), rgba(255,255,255,0.78) 44%, rgba(234,243,233,0.64)),
+      url('https://images.pexels.com/photos/417073/pexels-photo-417073.jpeg?auto=compress&w=1400') center/cover;
   }
-  .hero h1 { font-size:28px; font-weight:800; letter-spacing:-0.5px; }
-  .hero .subtitle { color:var(--dim); font-size:13px; margin-top:4px; }
-  .hero-stats { display:flex; gap:24px; flex-wrap:wrap; }
-  .hero-stat { display:flex; flex-direction:column; align-items:flex-end; }
+  .hero h1 { font-size:42px; line-height:1.05; font-weight:850; letter-spacing:0; }
+  .hero .subtitle { color:var(--dim); font-size:14px; margin-top:12px; max-width:720px; }
+  .hero-stats { display:grid; grid-template-columns:repeat(2,minmax(100px,1fr)); gap:10px; min-width:260px; }
+  .hero-stat { min-height:72px; padding:12px; border:1px solid var(--border); border-radius:8px;
+    background:rgba(255,255,255,0.72); display:flex; flex-direction:column; justify-content:space-between; }
   .hero-stat .lbl { font-size:11px; color:var(--dim2); text-transform:uppercase; letter-spacing:0.5px; }
   .hero-stat .val { font-size:20px; font-weight:700; }
 
   /* Verdict */
-  .verdict-card { background:linear-gradient(135deg, rgba(14,165,233,0.04), rgba(99,102,241,0.02)); }
-  .verdict-label { font-size:12px; color:var(--accent); font-weight:600; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px; }
-  .verdict-text { font-size:15px; line-height:1.7; }
+  .verdict-card { background:linear-gradient(135deg, rgba(22,138,70,0.08), rgba(255,255,255,0.82)); }
+  .verdict-label,.section-label { font-size:12px; color:var(--accent2); font-weight:800; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px; }
+  .verdict-text { font-size:16px; line-height:1.7; font-weight:650; }
+
+  /* Review theater */
+  .theater-card {
+    background:linear-gradient(135deg, rgba(247,200,91,0.13), transparent 36%),
+      linear-gradient(245deg, rgba(14,143,131,0.1), transparent 40%),
+      linear-gradient(180deg, rgba(255,255,255,0.97), rgba(248,251,247,0.96));
+  }
+  .theater-grid { display:grid; grid-template-columns:1fr 1.15fr 1fr; gap:12px; }
+  .theater-box { min-height:188px; padding:16px; border:1px solid var(--border); border-radius:8px; background:rgba(255,255,255,0.72); }
+  .theater-title { font-size:16px; font-weight:850; }
+  .theater-copy { margin-top:8px; color:var(--dim); font-size:13px; }
+  .mood-layout { display:grid; grid-template-columns:112px 1fr; gap:14px; align-items:center; margin-top:16px; }
+  .mood-dial { width:112px; aspect-ratio:1; border-radius:8px; display:grid; place-items:center;
+    background:conic-gradient(var(--neg) 0 var(--pressure), rgba(216,226,215,0.78) var(--pressure) 100%);
+    box-shadow:inset 0 0 0 10px rgba(255,255,255,0.92), 0 0 28px rgba(216,84,84,0.12); }
+  .mood-dial strong { color:var(--text); font-size:28px; line-height:1; }
+  .mood-dial span { display:block; color:var(--dim2); font-size:10px; text-align:center; }
+  .mood-tags { display:flex; flex-wrap:wrap; gap:7px; margin-top:12px; }
+  .mood-tags span { padding:6px 8px; border:1px solid var(--border); border-radius:7px; color:var(--dim);
+    background:rgba(255,255,255,0.72); font-size:12px; font-weight:700; }
+  .flow-stack { display:flex; flex-direction:column; gap:9px; margin-top:14px; }
+  .flow-row { display:grid; grid-template-columns:34px 1fr 44px; gap:10px; align-items:center; }
+  .flow-track { height:12px; border-radius:8px; background:#edf3ec; overflow:hidden; border:1px solid rgba(23,35,22,0.06); }
+  .flow-fill { height:100%; border-radius:inherit; width:var(--w); background:var(--c); }
+  .flow-row strong { font-size:13px; }
+  .flow-row span { color:var(--dim); font-size:12px; text-align:right; }
+  .pulse-list { display:flex; flex-direction:column; gap:9px; margin-top:14px; }
+  .pulse-item { padding:10px; border:1px solid var(--border); border-radius:8px; background:rgba(255,255,255,0.66); }
+  .pulse-item .lbl { color:var(--dim2); font-size:11px; font-weight:800; margin-bottom:4px; }
+  .pulse-item .val { color:var(--text); font-size:13px; }
 
   /* Tier cards */
   .tier-card { display:flex; flex-direction:column; gap:12px; }
   .tier-card .accent-bar { position:absolute; top:0; left:0; width:4px; height:100%; border-radius:4px 0 0 4px; }
   .tier-header { display:flex; align-items:center; gap:10px; }
-  .tier-badge { width:32px; height:32px; border-radius:10px; display:flex; align-items:center; justify-content:center;
+  .tier-badge { width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center;
     font-size:16px; font-weight:800; }
   .tier-label { font-size:18px; font-weight:700; }
   .tier-desc { font-size:13px; color:var(--dim); flex:1; }
-  .tier-count { font-size:15px; font-weight:700; padding:2px 12px; border-radius:20px; }
-  .tier-note { font-size:13px; color:var(--dim); font-style:italic; padding:8px 12px; border-radius:8px; background:rgba(148,163,184,0.06); }
+  .tier-count { font-size:15px; font-weight:700; padding:2px 12px; border-radius:8px; }
+  .tier-note { font-size:13px; color:var(--dim); padding:8px 12px; border-radius:8px; background:rgba(255,255,255,0.64); }
 
   /* Stock table */
   .stock-table { width:100%; border-collapse:collapse; font-size:13px; }
-  .stock-table th { text-align:left; padding:8px 10px; color:var(--dim2); font-weight:500; font-size:11px;
+  .stock-table th { text-align:left; padding:8px 10px; color:var(--dim2); font-weight:800; font-size:11px;
     text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid var(--border); }
-  .stock-table td { padding:8px 10px; border-bottom:1px solid rgba(148,163,184,0.06); }
+  .stock-table td { padding:8px 10px; border-bottom:1px solid rgba(23,35,22,0.07); }
   .stock-table tr:last-child td { border-bottom:none; }
-  .stock-table tr:hover td { background:rgba(14,165,233,0.03); }
+  .stock-table tr:hover td { background:rgba(22,138,70,0.05); }
   .stock-table .code { color:var(--accent); font-family:"SF Mono",monospace; font-size:12px; }
   .stock-table .name { font-weight:600; }
   .stock-table .reason { color:var(--dim); max-width:260px; font-size:12px; }
   .stock-table .tags { white-space:nowrap; font-size:12px; }
   .stock-chips { display:flex; flex-wrap:wrap; gap:6px; }
-  .chip { background:rgba(148,163,184,0.08); border:1px solid var(--border); border-radius:8px; padding:4px 12px; font-size:13px; }
+  .chip { background:rgba(255,255,255,0.72); border:1px solid var(--border); border-radius:8px; padding:4px 12px; font-size:13px; }
   .empty { color:var(--dim2); font-style:italic; font-size:13px; }
 
   /* Risk */
   .risk-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:12px; }
-  .risk-item { background:rgba(239,68,68,0.04); border:1px solid rgba(239,68,68,0.1); border-radius:var(--radius-sm); padding:16px; }
+  .risk-item { background:rgba(216,84,84,0.08); border:1px solid rgba(216,84,84,0.16); border-radius:var(--radius-sm); padding:16px; }
   .risk-item .lbl { font-size:11px; color:var(--dim2); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px; }
   .risk-item .val { font-size:14px; }
 
   /* Section */
-  .section-label { font-size:12px; color:var(--accent); font-weight:600; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:12px; }
   .change-group { margin-bottom:12px; }
   .change-group h4 { font-size:14px; margin-bottom:6px; color:var(--text); }
   .change-group ul { list-style:none; }
@@ -94,14 +141,19 @@
   .footer-card a { color:var(--accent); text-decoration:none; }
 
   @media (max-width:900px) {
+    body { padding:18px; }
+    .hero { grid-template-columns:1fr; }
     .span-6,.span-4 { grid-column:span 12; }
     .span-3 { grid-column:span 6; }
+    .theater-grid { grid-template-columns:1fr; }
     .risk-grid { grid-template-columns:1fr; }
   }
   @media (max-width:500px) {
+    body { padding:12px; }
     .span-3 { grid-column:span 12; }
-    .hero-stats { width:100%; }
-    .hero-stat { align-items:flex-start; }
+    .hero h1 { font-size:34px; }
+    .hero-stats { width:100%; grid-template-columns:1fr; }
+    .mood-layout { grid-template-columns:1fr; }
   }
 </style>
 </head>
@@ -126,22 +178,71 @@
   </div>
 
   
-    <div class="card tier-card span-6" style="background:linear-gradient(135deg, rgba(34,197,94,0.12), rgba(34,197,94,0.02))">
-      <div class="accent-bar" style="background:#22c55e"></div>
+  <div class="card theater-card span-12">
+    <div class="section-label">Review Theater</div>
+    <div class="theater-grid">
+      <div class="theater-box">
+        <div class="theater-title">市场心情：防守模式</div>
+        <p class="theater-copy">分档明显向 D 档堆积，首页第一眼就应该提醒：这是一份偏风控的报告。</p>
+        <div class="mood-layout">
+          <div class="mood-dial" style="--pressure:87%">
+            <div><strong>87</strong><span>PRESSURE</span></div>
+          </div>
+          <div><div class="mood-tags"><span>A档稀缺</span><span>B档收缩</span><span>D档高压</span><span>熊市判定</span></div></div>
+        </div>
+      </div>
+      <div class="theater-box">
+        <div class="theater-title">分档流量</div>
+        <p class="theater-copy">把四档压成一条流量图，风险是否在扩散会更直观。</p>
+        <div class="flow-stack">
+          <div class="flow-row">
+            <strong style="color:#168a46">A</strong>
+            <div class="flow-track"><div class="flow-fill" style="--w:0%;--c:#168a46"></div></div>
+            <span>0只</span>
+          </div>
+          <div class="flow-row">
+            <strong style="color:#b87916">B</strong>
+            <div class="flow-track"><div class="flow-fill" style="--w:1%;--c:#b87916"></div></div>
+            <span>1只</span>
+          </div>
+          <div class="flow-row">
+            <strong style="color:#697868">C</strong>
+            <div class="flow-track"><div class="flow-fill" style="--w:12%;--c:#697868"></div></div>
+            <span>12只</span>
+          </div>
+          <div class="flow-row">
+            <strong style="color:#d85454">D</strong>
+            <div class="flow-track"><div class="flow-fill" style="--w:87%;--c:#d85454"></div></div>
+            <span>87只</span>
+          </div>
+        </div>
+      </div>
+      <div class="theater-box">
+        <div class="theater-title">风险脉冲</div>
+        <p class="theater-copy">把报告里的风险句子提前，不等读完整页才发现今天该收手。</p>
+        <div class="pulse-list">
+          <div class="pulse-item"><div class="lbl">H28 陷阱率</div><div class="val">75%+ 满足sell&gt;buy</div></div>
+          <div class="pulse-item"><div class="lbl">消息面风险</div><div class="val">至少25只查出明确利空(减持/解禁/ST/财务造假/可转债强赎/跌停/诉讼)</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+      <div class="card tier-card span-6" style="background:linear-gradient(135deg, rgba(22,138,70,0.13), rgba(255,255,255,0.78))">
+      <div class="accent-bar" style="background:#168a46"></div>
       <div class="tier-header">
-        <div class="tier-badge" style="background:#22c55e20;color:#22c55e">A</div>
+        <div class="tier-badge" style="background:#168a4620;color:#168a46">A</div>
         <span class="tier-label">强烈推荐</span>
-        <span class="tier-count" style="color:#22c55e;background:#22c55e15">0 只</span>
+        <span class="tier-count" style="color:#168a46;background:#168a4615">0 只</span>
       </div>
       <div class="tier-note">连续五日0只A档。市场转熊，宁缺毋滥。</div>
       <p class="empty">无</p>
-    </div>
-    <div class="card tier-card span-6" style="background:linear-gradient(135deg, rgba(234,179,8,0.12), rgba(234,179,8,0.02))">
-      <div class="accent-bar" style="background:#eab308"></div>
+    </div>    <div class="card tier-card span-6" style="background:linear-gradient(135deg, rgba(247,200,91,0.18), rgba(255,255,255,0.78))">
+      <div class="accent-bar" style="background:#b87916"></div>
       <div class="tier-header">
-        <div class="tier-badge" style="background:#eab30820;color:#eab308">B</div>
+        <div class="tier-badge" style="background:#b8791620;color:#b87916">B</div>
         <span class="tier-label">可关注</span>
-        <span class="tier-count" style="color:#eab308;background:#eab30815">1 只</span>
+        <span class="tier-count" style="color:#b87916;background:#b8791615">1 只</span>
       </div>
       
       
@@ -159,23 +260,21 @@
         </tr>
         </tbody>
       </table>
-    </div>
-    <div class="card tier-card span-6" style="background:linear-gradient(135deg, rgba(148,163,184,0.12), rgba(148,163,184,0.02))">
-      <div class="accent-bar" style="background:#94a3b8"></div>
+    </div>    <div class="card tier-card span-6" style="background:linear-gradient(135deg, rgba(105,120,104,0.12), rgba(255,255,255,0.78))">
+      <div class="accent-bar" style="background:#697868"></div>
       <div class="tier-header">
-        <div class="tier-badge" style="background:#94a3b820;color:#94a3b8">C</div>
+        <div class="tier-badge" style="background:#69786820;color:#697868">C</div>
         <span class="tier-label">观望</span>
-        <span class="tier-count" style="color:#94a3b8;background:#94a3b815">12 只</span>
+        <span class="tier-count" style="color:#697868;background:#69786815">12 只</span>
       </div>
       
       <div class="stock-chips"><span class="chip">山煤国际(昨B降C)</span><span class="chip">浙能电力(昨B降C)</span><span class="chip">比音勒芬(昨B降C)</span><span class="chip">金螳螂</span><span class="chip">合百集团</span><span class="chip">恒林股份(昨B降C)</span><span class="chip">威迈斯</span><span class="chip">热威股份</span><span class="chip">誉衡药业(昨B降C)</span><span class="chip">瑞晨环保</span><span class="chip">海信家电(H46争议)</span><span class="chip">美的集团(昨B降C)</span></div>
-    </div>
-    <div class="card tier-card span-6" style="background:linear-gradient(135deg, rgba(239,68,68,0.12), rgba(239,68,68,0.02))">
-      <div class="accent-bar" style="background:#ef4444"></div>
+    </div>    <div class="card tier-card span-6" style="background:linear-gradient(135deg, rgba(216,84,84,0.16), rgba(255,255,255,0.78))">
+      <div class="accent-bar" style="background:#d85454"></div>
       <div class="tier-header">
-        <div class="tier-badge" style="background:#ef444420;color:#ef4444">D</div>
+        <div class="tier-badge" style="background:#d8545420;color:#d85454">D</div>
         <span class="tier-label">回避</span>
-        <span class="tier-count" style="color:#ef4444;background:#ef444415">87 只</span>
+        <span class="tier-count" style="color:#d85454;background:#d8545415">87 只</span>
       </div>
       <div class="tier-note">D档87%。转熊后H20选股失效全面爆发：亏损股30+只、H28陷阱75%、H46触发5只、放量下跌40+只、减持/解禁/ST/财务造假密集</div>
       <p class="empty">无</p>
@@ -194,7 +293,7 @@
 
   <div class="card footer-card span-12">
     以上分析仅供参考，不构成投资建议。股市有风险，投资需谨慎。<br>
-    <a href="alpha.html">📈 查看 Alpha 追踪</a> · stock-wave-analyzer · 2026-06-28 21:49
+    <a href="alpha.html">📈 查看 Alpha 追踪</a> · stock-wave-analyzer · 2026-06-29 12:06
   </div>
 </div>
 </body>
