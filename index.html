@@ -14,6 +14,7 @@
     --shadow:0 18px 45px rgba(52,76,55,0.12);
     --shadow-hover:0 22px 52px rgba(52,76,55,0.16);
     --radius:8px; --radius-sm:8px;
+    --daily-bg:url('https://images.pexels.com/photos/417073/pexels-photo-417073.jpeg?auto=compress&w=1920');
   }
   * { margin:0; padding:0; box-sizing:border-box; }
   html { background:var(--bg); }
@@ -23,7 +24,7 @@
     position:relative;
     background:
       linear-gradient(135deg, rgba(255,255,255,0.92), rgba(241,247,241,0.84) 42%, rgba(232,240,231,0.9)),
-      url('https://images.pexels.com/photos/417073/pexels-photo-417073.jpeg?auto=compress&w=1920') center/cover fixed;
+      var(--daily-bg) center/cover fixed;
   }
   body::before {
     content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
@@ -51,7 +52,7 @@
     min-height:220px; display:grid; grid-template-columns:minmax(0,1fr) auto; gap:28px; align-items:start;
     background:
       linear-gradient(105deg, rgba(255,255,255,0.94), rgba(255,255,255,0.78) 44%, rgba(234,243,233,0.64)),
-      url('https://images.pexels.com/photos/417073/pexels-photo-417073.jpeg?auto=compress&w=1400') center/cover;
+      var(--daily-bg) center/cover;
   }
   .hero h1 { font-size:42px; line-height:1.05; font-weight:850; letter-spacing:0; }
   .hero .subtitle { color:var(--dim); font-size:14px; margin-top:12px; max-width:720px; }
@@ -293,8 +294,31 @@
 
   <div class="card footer-card span-12">
     以上分析仅供参考，不构成投资建议。股市有风险，投资需谨慎。<br>
-    <a href="alpha.html">📈 查看 Alpha 追踪</a> · stock-wave-analyzer · 2026-06-29 12:06
+    <a href="alpha.html">📈 查看 Alpha 追踪</a> · stock-wave-analyzer · 2026-06-29 12:13
   </div>
 </div>
+<script>
+  (() => {
+    const today = new Date().toISOString().slice(0, 10);
+    const fallback = `https://api.dujin.org/bing/1920.php?date=${today}`;
+    const setBackground = (url) => {
+      document.documentElement.style.setProperty("--daily-bg", `url("${url}")`);
+    };
+    const loadImage = (url) => {
+      const image = new Image();
+      image.referrerPolicy = "no-referrer";
+      image.onload = () => setBackground(url);
+      image.src = url;
+    };
+    fetch("https://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1&mkt=zh-CN")
+      .then((response) => (response.ok ? response.json() : Promise.reject()))
+      .then((data) => {
+        const item = data && data.images && data.images[0];
+        if (!item || !item.url) throw new Error("No daily wallpaper");
+        loadImage(item.url.startsWith("http") ? item.url : `https://www.bing.com${item.url}`);
+      })
+      .catch(() => loadImage(fallback));
+  })();
+</script>
 </body>
 </html>
