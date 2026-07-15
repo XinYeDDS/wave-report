@@ -1,0 +1,153 @@
+{
+  "date": "20260715",
+  "scan_info": {
+    "total_scanned": 4781,
+    "top100": 100,
+    "market_regime": "熊市",
+    "capture_rate": "1.1%",
+    "buy_rating_count": 39,
+    "buy_rating_abnormal": true
+  },
+  "market_context": {
+    "phase": "熊市延续",
+    "ma20_below_ma60": true,
+    "panic_day": true,
+    "advice": "A=0, B档仅防御观察"
+  },
+  "final_tiers": {
+    "A": {
+      "count": 0,
+      "note": "连续多日A=0",
+      "stocks": []
+    },
+    "B": {
+      "count": 5,
+      "note": "全部H35避风港（食品/医药/煤炭/电力）",
+      "stocks": [
+        {
+          "code": "000895",
+          "name": "双汇发展",
+          "reason": "H32食品+PE甜点16.4+低位26%",
+          "risk": "violation严重+周K空头"
+        },
+        {
+          "code": "000963",
+          "name": "华东医药",
+          "reason": "医药防御+PE甜点16.1+低位27%+放量",
+          "risk": "violation严重"
+        },
+        {
+          "code": "300181",
+          "name": "佐力药业",
+          "reason": "医药+PE甜点16.4+低位37%+放量",
+          "risk": "市值偏小106亿"
+        },
+        {
+          "code": "600985",
+          "name": "淮北矿业",
+          "reason": "煤炭+PE甜点26.9+MACD金叉",
+          "risk": "日K空头+规则3违反"
+        },
+        {
+          "code": "600578",
+          "name": "京能电力",
+          "reason": "H35电力+低位40%",
+          "risk": "PE<15警惕H18"
+        }
+      ]
+    },
+    "C": {
+      "count": 12,
+      "note": "信号中性，多数有PE或市值瑕疵",
+      "stocks": [
+        {
+          "code": "688566",
+          "name": "吉贝尔"
+        },
+        {
+          "code": "601369",
+          "name": "陕鼓动力"
+        },
+        {
+          "code": "300059",
+          "name": "东方财富"
+        },
+        {
+          "code": "601319",
+          "name": "中国人保"
+        },
+        {
+          "code": "300358",
+          "name": "楚天科技"
+        },
+        {
+          "code": "002128",
+          "name": "电投能源"
+        },
+        {
+          "code": "000026",
+          "name": "飞亚达"
+        },
+        {
+          "code": "000567",
+          "name": "海德股份"
+        },
+        {
+          "code": "000507",
+          "name": "珠海港"
+        },
+        {
+          "code": "600459",
+          "name": "贵研铂业"
+        },
+        {
+          "code": "600237",
+          "name": "铜峰电子"
+        },
+        {
+          "code": "605168",
+          "name": "三人行"
+        }
+      ]
+    },
+    "D": {
+      "count": 83,
+      "note": "H28陷阱6+H46 net≈0 4+五浪高位40+空头买入18. TOP1金安国纪三重触发.",
+      "stocks": [
+        {
+          "code": "002636",
+          "name": "金安国纪"
+        },
+        {
+          "code": "600367",
+          "name": "红星发展"
+        }
+      ]
+    }
+  },
+  "risk_summary": {
+    "key_risks": [
+      "39只买入是H52形态偏差导致的系统性假信号",
+      "TOP1金安国纪net≈0+PE=229+五浪高位三重触发",
+      "TOP2红星发展buy=56.8但今日暴跌-8%",
+      "昨日4只B档能源股全部跌出TOP100（H41未落地）"
+    ],
+    "h28_status": "6 traps, 0 bugs",
+    "h52_status": "极高：39买入异常再次验证形态偏差"
+  },
+  "review_method": "wave-reviewer agent",
+  "notable_changes": {
+    "🔥 异常发现": [
+      "39只买入评级（正常15-20只）= H52系统性膨胀",
+      "capture_rate 1.1%史上最低"
+    ],
+    "📉 验证": [
+      "TOP2红星发展buy=56.8但今日-8%=市场否定",
+      "昨日B档4只能源全跌出TOP100"
+    ],
+    "🟢 有效信号": [
+      "B档5只全部来自H35避风港",
+      "H46 net≈0 6只全部识别"
+    ]
+  }
+}
