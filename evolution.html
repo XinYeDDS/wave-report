@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>进化分析 | 波浪选股</title>
+<style>
+  :root {
+    --bg:#f2f5f1; --card:#ffffff; --card-hover:#fbfdfb;
+    --border:#d8e2d7; --border-hover:#c6d4c4;
+    --text:#172316; --dim:#5d6f5c; --dim2:#879485;
+    --accent:#168a46; --accent2:#0e8f83;
+    --pos:#168a46; --neg:#d85454; --warn:#b87916; --steel:#697868;
+    --shadow:0 18px 45px rgba(52,76,55,0.12);
+    --shadow-hover:0 22px 52px rgba(52,76,55,0.16);
+    --radius:8px;
+    --daily-bg:url('https://images.pexels.com/photos/1118873/pexels-photo-1118873.jpeg?auto=compress&w=1920');
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { background:var(--bg); }
+  body {
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",Roboto,sans-serif;
+    color:var(--text); line-height:1.6; padding:28px; min-height:100vh;
+    position:relative;
+    background:
+      linear-gradient(135deg, rgba(255,255,255,0.92), rgba(241,247,241,0.84) 42%, rgba(232,240,231,0.9)),
+      var(--daily-bg) center/cover fixed;
+  }
+  body::before {
+    content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
+    background:
+      linear-gradient(rgba(28,54,31,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(28,54,31,0.04) 1px, transparent 1px);
+    background-size:44px 44px;
+    mask-image:linear-gradient(to bottom, rgba(28,54,31,0.55), transparent 78%);
+  }
+  .bento { max-width:1240px; margin:0 auto; display:grid; grid-template-columns:repeat(12,1fr); gap:14px; }
+  .card {
+    background:linear-gradient(180deg, rgba(255,255,255,0.96), rgba(248,251,247,0.94));
+    border:1px solid var(--border); border-radius:var(--radius); padding:22px;
+    box-shadow:var(--shadow); transition:all 0.25s cubic-bezier(0.4,0,0.2,1); position:relative; overflow:hidden;
+  }
+  .card:hover { background:var(--card-hover); border-color:var(--border-hover); box-shadow:var(--shadow-hover); transform:translateY(-2px); }
+  .card::before { content:""; position:absolute; top:0; left:0; right:0; height:1px;
+    background:linear-gradient(90deg, transparent, rgba(22,138,70,0.35), rgba(14,143,131,0.22), transparent); opacity:0.85; }
+  .span-12 { grid-column:span 12; }
+  .span-8 { grid-column:span 8; }
+  .span-6 { grid-column:span 6; }
+  .span-4 { grid-column:span 4; }
+  .span-3 { grid-column:span 3; }
+
+  /* Hero */
+  .hero {
+    min-height:220px; display:grid; grid-template-columns:minmax(0,1fr) auto; gap:28px; align-items:start;
+    background:
+      linear-gradient(105deg, rgba(255,255,255,0.94), rgba(255,255,255,0.78) 44%, rgba(234,243,233,0.64)),
+      var(--daily-bg) center/cover;
+  }
+  .hero h1 { font-size:42px; line-height:1.05; font-weight:850; }
+  .hero .subtitle { color:var(--dim); font-size:14px; margin-top:12px; max-width:720px; }
+  .hero-stats { display:grid; grid-template-columns:repeat(2,minmax(100px,1fr)); gap:10px; min-width:260px; }
+  .hero-stat { min-height:72px; padding:12px; border:1px solid var(--border); border-radius:8px;
+    background:rgba(255,255,255,0.72); display:flex; flex-direction:column; justify-content:space-between; }
+  .hero-stat .lbl { font-size:11px; color:var(--dim2); text-transform:uppercase; letter-spacing:0.5px; }
+  .hero-stat .val { font-size:20px; font-weight:700; }
+
+  /* Section labels */
+  .section-label { font-size:12px; color:var(--accent2); font-weight:800; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px; }
+  .section-title { font-size:20px; font-weight:850; margin-bottom:12px; }
+
+  /* Badge */
+  .badge { display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border-radius:6px; font-size:12px; font-weight:700; }
+  .badge-green { background:rgba(22,138,70,0.12); color:var(--pos); border:1px solid rgba(22,138,70,0.2); }
+  .badge-red { background:rgba(216,84,84,0.12); color:var(--neg); border:1px solid rgba(216,84,84,0.2); }
+  .badge-amber { background:rgba(184,121,22,0.12); color:var(--warn); border:1px solid rgba(184,121,22,0.2); }
+  .badge-steel { background:rgba(105,120,104,0.12); color:var(--steel); border:1px solid rgba(105,120,104,0.2); }
+
+  /* Tables */
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th { text-align:left; padding:8px 10px; border-bottom:2px solid var(--border); color:var(--dim2); font-size:11px; text-transform:uppercase; letter-spacing:0.5px; }
+  td { padding:8px 10px; border-bottom:1px solid var(--border); }
+  tr:hover td { background:rgba(22,138,70,0.04); }
+
+  /* Capture rate chart */
+  .cr-chart { width:100%; height:200px; }
+  .cr-chart .grid line { stroke:rgba(23,35,22,0.08); stroke-width:1; }
+  .cr-chart .axis text { font-size:10px; fill:var(--dim2); }
+  .cr-chart .bar { fill:var(--accent); opacity:0.85; transition:opacity 0.2s; }
+  .cr-chart .bar:hover { opacity:1; }
+  .cr-chart .bar-peak { fill:var(--pos); }
+  .cr-chart .bar-low { fill:var(--neg); }
+  .cr-chart .line { fill:none; stroke:var(--warn); stroke-width:2; stroke-dasharray:5 5; }
+  .cr-chart .label { font-size:10px; fill:var(--dim); font-weight:700; }
+
+  /* Hypothesis cards */
+  .hyp-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:12px; }
+  .hyp-card { padding:14px; border:1px solid var(--border); border-radius:8px; background:rgba(255,255,255,0.72); }
+  .hyp-card .hyp-id { font-size:12px; font-weight:800; color:var(--accent2); }
+  .hyp-card .hyp-desc { font-size:13px; margin-top:6px; color:var(--text); }
+  .hyp-card .hyp-meta { font-size:11px; color:var(--dim2); margin-top:8px; }
+
+  /* Priority list */
+  .priority-item { padding:14px; border:1px solid var(--border); border-radius:8px; margin-bottom:10px; background:rgba(255,255,255,0.72); }
+  .priority-item .pri-head { display:flex; align-items:center; gap:10px; }
+  .priority-item .pri-tag { padding:3px 8px; border-radius:5px; font-size:11px; font-weight:800; }
+  .pri-p0 { background:rgba(216,84,84,0.12); color:var(--neg); }
+  .pri-p1 { background:rgba(184,121,22,0.12); color:var(--warn); }
+  .pri-p2 { background:rgba(105,120,104,0.12); color:var(--steel); }
+  .priority-item .pri-title { font-size:14px; font-weight:700; }
+  .priority-item .pri-desc { font-size:13px; color:var(--dim); margin-top:6px; }
+  .priority-item .pri-impact { font-size:12px; color:var(--accent); margin-top:6px; font-weight:600; }
+
+  /* Timeline */
+  .timeline { position:relative; padding-left:28px; }
+  .timeline::before { content:""; position:absolute; left:10px; top:0; bottom:0; width:2px; background:linear-gradient(to bottom, var(--accent), var(--accent2), transparent); }
+  .tl-item { position:relative; margin-bottom:18px; }
+  .tl-item::before { content:""; position:absolute; left:-22px; top:4px; width:12px; height:12px; border-radius:50%; background:var(--accent); border:2px solid #fff; box-shadow:0 0 0 2px var(--accent); }
+  .tl-item.peak::before { background:var(--pos); box-shadow:0 0 0 2px var(--pos), 0 0 12px rgba(22,138,70,0.4); }
+  .tl-item.crisis::before { background:var(--neg); box-shadow:0 0 0 2px var(--neg), 0 0 12px rgba(216,84,84,0.4); }
+  .tl-date { font-size:12px; color:var(--dim2); font-weight:700; }
+  .tl-title { font-size:14px; font-weight:700; margin-top:2px; }
+  .tl-desc { font-size:13px; color:var(--dim); margin-top:4px; }
+
+  /* Pie chart for 漏因 */
+  .pie-container { display:grid; grid-template-columns:200px 1fr; gap:20px; align-items:center; }
+  .pie-svg { width:200px; height:200px; }
+  .pie-legend { display:flex; flex-direction:column; gap:10px; }
+  .pie-legend-item { display:flex; align-items:center; gap:8px; font-size:13px; }
+  .pie-legend-dot { width:14px; height:14px; border-radius:4px; flex-shrink:0; }
+
+  /* Verdict */
+  .verdict-card { background:linear-gradient(135deg, rgba(22,138,70,0.08), rgba(255,255,255,0.82)); }
+  .verdict-text { font-size:15px; line-height:1.7; font-weight:650; }
+  .verdict-text strong { color:var(--accent); }
+
+  /* Round 4 result */
+  .r4-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+  .r4-stat { padding:16px; border:1px solid rgba(22,138,70,0.2); border-radius:8px; background:linear-gradient(180deg, rgba(255,255,255,0.56), rgba(243,249,242,0.78)); text-align:center; }
+  .r4-stat .r4-val { font-size:28px; font-weight:850; color:var(--accent); }
+  .r4-stat .r4-lbl { font-size:12px; color:var(--dim); margin-top:4px; }
+
+  /* Review table */
+  .review-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
+  .review-stat { padding:14px; border:1px solid var(--border); border-radius:8px; background:rgba(255,255,255,0.72); text-align:center; }
+  .review-stat .rv-val { font-size:24px; font-weight:850; }
+  .review-stat .rv-lbl { font-size:11px; color:var(--dim2); margin-top:2px; }
+
+  /* Footer */
+  .footer { text-align:center; padding:20px; color:var(--dim2); font-size:12px; }
+  .footer a { color:var(--accent); text-decoration:none; font-weight:600; }
+  .footer a:hover { text-decoration:underline; }
+</style>
+</head>
+<body>
+<div class="bento">
+
+  <!-- Hero -->
+  <div class="card hero span-12">
+    <div>
+      <span class="badge badge-green">TEST段 · 不调参</span>
+      <h1 style="margin-top:10px;">🌊 波浪选股进化分析</h1>
+      <p class="subtitle">算法自进化记录 — 假设驱动 · 回溯验证 · 最小化改动 · 一致性检查。从 Round 4 (H52 形态偏差修正) 到 Round 5 调参方向，追踪 capture rate 从 1.8% → 13.7% 峰值 → 1.1% 绝对最低的完整轨迹。</p>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat"><span class="lbl">Capture Rate</span><span class="val" style="color:var(--neg)">1.1%</span></div>
+      <div class="hero-stat"><span class="lbl">历史峰值</span><span class="val" style="color:var(--pos)">13.7%</span></div>
+      <div class="hero-stat"><span class="lbl">验证批次</span><span class="val">12+</span></div>
+      <div class="hero-stat"><span class="lbl">熊市天数</span><span class="val">13天</span></div>
+    </div>
+  </div>
+
+  <!-- Verdict -->
+  <div class="card verdict-card span-12">
+    <div class="section-label">当前结论</div>
+    <p class="verdict-text">
+      <strong>H52 维度已饱和（phase complete）</strong> — capture rate 从 13.7% 峰值四日崩塌至 1.1%（-92%），但根因不是 H52 fix 失效，而是<strong>行情风格切换</strong>：从「均线粘合蓄势突破」切换为「空头超跌反弹」。<strong>H41 空头趋势 -15 分系统性惩罚</strong>是 H52 饱和后暴露的第一个更深层瓶颈（占评分偏低 45.2% 主体）。Round 5 P0 优先级重排：H41 空头趋势评分反转（-15→+5）>> PE 硬过滤→软惩罚（17.6%）> H51c 均线粘合权重修正。
+    </p>
+  </div>
+
+  <!-- Capture Rate Chart -->
+  <div class="card span-8">
+    <div class="section-label">Capture Rate 历史</div>
+    <div class="section-title">📈 从峰值到崩塌：H52 fix 效果与饱和</div>
+    <svg class="cr-chart" viewBox="0 0 720 200">
+      <!-- Grid -->
+      <g class="grid">
+        <line x1="40" y1="20" x2="700" y2="20" />
+        <line x1="40" y1="60" x2="700" y2="60" />
+        <line x1="40" y1="100" x2="700" y2="100" />
+        <line x1="40" y1="140" x2="700" y2="140" />
+        <line x1="40" y1="180" x2="700" y2="180" />
+      </g>
+      <!-- Y axis labels -->
+      <g class="axis">
+        <text x="35" y="24" text-anchor="end">15%</text>
+        <text x="35" y="64" text-anchor="end">10%</text>
+        <text x="35" y="104" text-anchor="end">5%</text>
+        <text x="35" y="144" text-anchor="end">2%</text>
+        <text x="35" y="184" text-anchor="end">0%</text>
+      </g>
+      <!-- Bars: 7/5=1.8, 7/6=4.4, 7/8=6.3, 7/9=13.7, 7/10=13.7, 7/11=5.9, 7/12=2.2, 7/13=2.2, 7/15=1.1 -->
+      <!-- scale: y = 180 - (val/15)*160, bar width 60, gap 18, start x=55 -->
+      <g>
+        <rect class="bar" x="55" y="161" width="60" height="19" rx="3"/> <!-- 7/5 1.8% -->
+        <text class="label" x="85" y="155" text-anchor="middle">1.8%</text>
+        <text class="label" x="85" y="195" text-anchor="middle">7/5</text>
+
+        <rect class="bar" x="133" y="133" width="60" height="47" rx="3"/> <!-- 7/6 4.4% -->
+        <text class="label" x="163" y="127" text-anchor="middle">4.4%</text>
+        <text class="label" x="163" y="195" text-anchor="middle">7/6</text>
+
+        <rect class="bar" x="211" y="113" width="60" height="67" rx="3"/> <!-- 7/8 6.3% -->
+        <text class="label" x="241" y="107" text-anchor="middle">6.3%</text>
+        <text class="label" x="241" y="195" text-anchor="middle">7/8</text>
+
+        <rect class="bar bar-peak" x="289" y="34" width="60" height="146" rx="3"/> <!-- 7/9 13.7% -->
+        <text class="label" x="319" y="28" text-anchor="middle" style="fill:var(--pos);font-weight:800">13.7%</text>
+        <text class="label" x="319" y="195" text-anchor="middle">7/9</text>
+
+        <rect class="bar bar-peak" x="367" y="34" width="60" height="146" rx="3"/> <!-- 7/10 13.7% -->
+        <text class="label" x="397" y="28" text-anchor="middle" style="fill:var(--pos)">13.7%</text>
+        <text class="label" x="397" y="195" text-anchor="middle">7/10</text>
+
+        <rect class="bar" x="445" y="117" width="60" height="63" rx="3"/> <!-- 7/11 5.9% -->
+        <text class="label" x="475" y="111" text-anchor="middle">5.9%</text>
+        <text class="label" x="475" y="195" text-anchor="middle">7/11</text>
+
+        <rect class="bar bar-low" x="523" y="157" width="60" height="23" rx="3"/> <!-- 7/12 2.2% -->
+        <text class="label" x="553" y="151" text-anchor="middle" style="fill:var(--neg)">2.2%</text>
+        <text class="label" x="553" y="195" text-anchor="middle">7/12</text>
+
+        <rect class="bar bar-low" x="601" y="157" width="60" height="23" rx="3"/> <!-- 7/13 2.2% -->
+        <text class="label" x="631" y="151" text-anchor="middle">2.2%</text>
+        <text class="label" x="631" y="195" text-anchor="middle">7/13</text>
+
+        <!-- 7/15 1.1% - insert after gap -->
+        <rect class="bar bar-low" x="679" y="168" width="60" height="12" rx="3" style="fill:var(--neg)"/> <!-- 7/15 1.1% -->
+        <text class="label" x="709" y="162" text-anchor="middle" style="fill:var(--neg);font-weight:800">1.1%</text>
+        <text class="label" x="709" y="195" text-anchor="middle">7/15</text>
+      </g>
+      <!-- Baseline line at 1.8% -->
+      <line class="line" x1="40" y1="161" x2="700" y2="161" />
+      <text x="700" y="158" text-anchor="end" style="font-size:9px;fill:var(--warn);font-weight:700">基线 1.8%</text>
+    </svg>
+    <p style="font-size:12px;color:var(--dim);margin-top:8px;">绿色=H52 fix 效果上升期 · 深绿=历史峰值 · 红色=崩塌期 · 虚线=Round 4 前基线。峰值 13.7%（+661% vs 基线），7/11 起因行情风格切换连续四日崩塌至 1.1%。</p>
+  </div>
+
+  <!-- 漏因三峰 Pie -->
+  <div class="card span-4">
+    <div class="section-label">7/15 漏因分布</div>
+    <div class="section-title">🔍 漏因三峰</div>
+    <div class="pie-container">
+      <svg class="pie-svg" viewBox="0 0 200 200">
+        <!-- 评分偏低 45.2% = 162.7° -->
+        <!-- 涨停过滤 33.3% = 119.9° -->
+        <!-- PE异常 17.6% = 63.4° -->
+        <!-- 其他 3.9% = 14.0° -->
+        <circle cx="100" cy="100" r="70" fill="none" stroke="#d85454" stroke-width="40"
+          stroke-dasharray="177.6 439.8" stroke-dashoffset="0" transform="rotate(-90 100 100)"/>
+        <circle cx="100" cy="100" r="70" fill="none" stroke="#b87916" stroke-width="40"
+          stroke-dasharray="130.7 439.8" stroke-dashoffset="-177.6" transform="rotate(-90 100 100)"/>
+        <circle cx="100" cy="100" r="70" fill="none" stroke="#0e8f83" stroke-width="40"
+          stroke-dasharray="69.1 439.8" stroke-dashoffset="-308.3" transform="rotate(-90 100 100)"/>
+        <circle cx="100" cy="100" r="70" fill="none" stroke="#879485" stroke-width="40"
+          stroke-dasharray="15.3 439.8" stroke-dashoffset="-377.4" transform="rotate(-90 100 100)"/>
+        <text x="100" y="96" text-anchor="middle" style="font-size:22px;font-weight:850;fill:var(--text)">279</text>
+        <text x="100" y="112" text-anchor="middle" style="font-size:11px;fill:var(--dim2)">漏网股</text>
+      </svg>
+      <div class="pie-legend">
+        <div class="pie-legend-item">
+          <div class="pie-legend-dot" style="background:#d85454"></div>
+          <span><strong>评分偏低</strong> 45.2%<br><span style="font-size:11px;color:var(--dim)">H41 空头 -15 分惩罚</span></span>
+        </div>
+        <div class="pie-legend-item">
+          <div class="pie-legend-dot" style="background:#b87916"></div>
+          <span><strong>涨停过滤</strong> 33.3%<br><span style="font-size:11px;color:var(--dim)">H51a 一刀切阻断</span></span>
+        </div>
+        <div class="pie-legend-item">
+          <div class="pie-legend-dot" style="background:#0e8f83"></div>
+          <span><strong>PE 异常</strong> 17.6%<br><span style="font-size:11px;color:var(--dim)">三层 PE 过滤</span></span>
+        </div>
+        <div class="pie-legend-item">
+          <div class="pie-legend-dot" style="background:#879485"></div>
+          <span><strong>其他</strong> 3.9%</span>
+        </div>
+      </div>
+    </div>
+    <p style="font-size:12px;color:var(--dim);margin-top:10px;">7/15 漏因三峰连续六日固化。评分偏低从 37%(7/12) 回升至 45.2% — H41 空头趋势系统性惩罚成最大瓶颈。</p>
+  </div>
+
+  <!-- Round 4 Results -->
+  <div class="card span-6">
+    <div class="section-label">Round 4 · H52 形态偏差修正</div>
+    <div class="section-title">✅ 算法史上最成功单次调参</div>
+    <div class="r4-grid">
+      <div class="r4-stat">
+        <div class="r4-val">+661%</div>
+        <div class="r4-lbl">CR 峰值增幅</div>
+      </div>
+      <div class="r4-stat">
+        <div class="r4-val">70%</div>
+        <div class="r4-lbl">pattern_clarity 降权</div>
+      </div>
+      <div class="r4-stat">
+        <div class="r4-val">12</div>
+        <div class="r4-lbl">验证批次</div>
+      </div>
+    </div>
+    <table style="margin-top:14px;">
+      <thead>
+        <tr><th>变更</th><th>说明</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>detect_wave_pattern()</code></td><td>新增 <code>market_regime</code> 参数</td></tr>
+        <tr><td>熊市 score 权重</td><td>pattern_clarity ×1.0 → ×0.3</td></tr>
+        <tr><td>熊市 buy_score 权重</td><td>pattern_clarity ×0.5 → ×0.15</td></tr>
+        <tr><td>非熊市路径</td><td>else 分支保留原逻辑（向后兼容）</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:12px;color:var(--dim);margin-top:10px;">
+      <span class="badge badge-green">Phase Complete</span> H52 修复的「形态清晰度偏差」维度已于 7/10 饱和——评分偏低 37% 为 fix 以来最低。此后 capture_rate 崩塌根因不在 H52 维度，而在 H41 空头趋势系统性惩罚。
+    </p>
+  </div>
+
+  <!-- 7/14-7/15 Review -->
+  <div class="card span-6">
+    <div class="section-label">最新复审 · 7/14-7/15</div>
+    <div class="section-title">📊 熊市第 12-13 天分档</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+      <div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:8px;">7/14（能源防御）</div>
+        <div class="review-grid" style="grid-template-columns:repeat(2,1fr);">
+          <div class="review-stat" style="border-color:rgba(22,138,70,0.2)"><div class="rv-val" style="color:var(--pos)">0</div><div class="rv-lbl">A档</div></div>
+          <div class="review-stat" style="border-color:rgba(184,121,22,0.2)"><div class="rv-val" style="color:var(--warn)">4</div><div class="rv-lbl">B档</div></div>
+          <div class="review-stat"><div class="rv-val" style="color:var(--steel)">11</div><div class="rv-lbl">C档</div></div>
+          <div class="review-stat" style="border-color:rgba(216,84,84,0.2)"><div class="rv-val" style="color:var(--neg)">84</div><div class="rv-lbl">D档</div></div>
+        </div>
+        <p style="font-size:11px;color:var(--dim);margin-top:8px;">B档：兖矿能源/长江电力/中国石油/中国海油（全部 H35 能源避风港）</p>
+      </div>
+      <div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:8px;">7/15（医药超跌反弹）</div>
+        <div class="review-grid" style="grid-template-columns:repeat(2,1fr);">
+          <div class="review-stat" style="border-color:rgba(22,138,70,0.2)"><div class="rv-val" style="color:var(--pos)">0</div><div class="rv-lbl">A档</div></div>
+          <div class="review-stat" style="border-color:rgba(184,121,22,0.2)"><div class="rv-val" style="color:var(--warn)">1</div><div class="rv-lbl">B档</div></div>
+          <div class="review-stat"><div class="rv-val" style="color:var(--steel)">10</div><div class="rv-lbl">C档</div></div>
+          <div class="review-stat" style="border-color:rgba(216,84,84,0.2)"><div class="rv-val" style="color:var(--neg)">89</div><div class="rv-lbl">D档</div></div>
+        </div>
+        <p style="font-size:11px;color:var(--dim);margin-top:8px;">B档：吉贝尔（唯一非能源B档）。H46 net≈0 批量拦截 6 次全中 D 档。</p>
+      </div>
+    </div>
+    <p style="font-size:12px;color:var(--dim);margin-top:12px;">
+      <span class="badge badge-green">A档连续13天挂零</span>
+      <span style="margin-left:6px;">熊市防御策略纪律持续执行到位。H20/H35 持续验证。</span>
+    </p>
+  </div>
+
+  <!-- Round 5 Priorities -->
+  <div class="card span-6">
+    <div class="section-label">Round 5 调参方向</div>
+    <div class="section-title">🎯 PEA 自主判定待执行</div>
+    <div class="priority-item">
+      <div class="pri-head">
+        <span class="pri-tag pri-p0">P0</span>
+        <span class="pri-title">H41 空头趋势评分反转</span>
+      </div>
+      <p class="pri-desc">42% 漏网股为空头趋势被算法 -15 分惩罚，反弹市中应为 +5 分正信号。兖矿能源 wave=67 空头 -15 罚分→TOP100 外→当日 +5.2%。</p>
+      <p class="pri-impact">预期覆盖 45.2% 评分偏低主体 → capture_rate +6-10pp</p>
+    </div>
+    <div class="priority-item">
+      <div class="pri-head">
+        <span class="pri-tag pri-p0">P0</span>
+        <span class="pri-title">PE 硬过滤→软惩罚（H53 共治）</span>
+      </div>
+      <p class="pri-desc">三层 PE 过滤（PE&lt;0 + PE&gt;100 硬排除 + PE 甜点偏袒）系统性排除 17.6% 反弹股。按板块 PE 特征自适应：传统/科技/国防/医药四套逻辑。</p>
+      <p class="pri-impact">预期 capture_rate +3-4pp</p>
+    </div>
+    <div class="priority-item">
+      <div class="pri-head">
+        <span class="pri-tag pri-p0">P0</span>
+        <span class="pri-title">H51c 均线粘合 wave_score 权重修正</span>
+      </div>
+      <p class="pri-desc">涨停前夜第一形态占漏网 33.6%，算法三重惩罚链（规则违反扣分→方向不明扣分→排名挤出）。需从 wave_score 内部修正，非外部 rank_score 补偿。</p>
+      <p class="pri-impact">预期 capture_rate +3-5pp（行情风格切换后边际收益可能下降）</p>
+    </div>
+    <div class="priority-item">
+      <div class="pri-head">
+        <span class="pri-tag pri-p1">P1</span>
+        <span class="pri-title">H51a 涨停过滤分级放宽</span>
+      </div>
+      <p class="pri-desc">涨停过滤 33.3% 连续六日固化。wave≥50 + 均线粘合标识 → 允许通过。</p>
+      <p class="pri-impact">预期 capture_rate +3-4pp</p>
+    </div>
+    <div class="priority-item">
+      <div class="pri-head">
+        <span class="pri-tag pri-p2">P2</span>
+        <span class="pri-title">H51b 空头 +8→+12</span>
+      </div>
+      <p class="pri-desc">60% 漏网股为空头趋势，+8 可能不够激进。round 4 已落地 +8 信号方向确认无误。</p>
+      <p class="pri-impact">预期 capture_rate +1-2pp</p>
+    </div>
+  </div>
+
+  <!-- Active Hypotheses -->
+  <div class="card span-6">
+    <div class="section-label">活跃假设</div>
+    <div class="section-title">🧪 核心假设追踪</div>
+    <table>
+      <thead>
+        <tr><th>#</th><th>假设</th><th>置信度</th><th>状态</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>H11</strong></td><td>排名无效/反向信号</td><td>🟢极高</td><td>6+批次验证</td></tr>
+        <tr><td><strong>H38</strong></td><td>消息面强制纳入</td><td>🟢极高</td><td>4次教科书拦截</td></tr>
+        <tr><td><strong>H41</strong></td><td>弱股反弹>强股延续</td><td>🟢极高</td><td>13+批次，代码未落地</td></tr>
+        <tr><td><strong>H45</strong></td><td>市场状态决定选股</td><td>🟢高</td><td>30天全周期</td></tr>
+        <tr><td><strong>H46</strong></td><td>net=0 绝对危险</td><td>🟢高</td><td>7/15批量6次全中</td></tr>
+        <tr><td><strong>H51a</strong></td><td>高位≠见顶</td><td>🟢极高</td><td>连续7天2662只验证</td></tr>
+        <tr><td><strong>H51b</strong></td><td>空头=反弹候选</td><td>🟢高</td><td>round 4 ✅ +8已落地</td></tr>
+        <tr><td><strong>H51c</strong></td><td>均线粘合+放量=蓄势</td><td>🟢高</td><td>三重惩罚链未修</td></tr>
+        <tr><td><strong>H52</strong></td><td>TOP100形态偏差</td><td>🟢极高</td><td><span class="badge badge-green" style="font-size:10px">Phase Complete</span></td></tr>
+        <tr><td><strong>H53</strong></td><td>PE框架反弹崩坏</td><td>🟢高</td><td>五批次验证完成</td></tr>
+        <tr><td><strong>H16</strong></td><td>PE 15-30最优区间</td><td>🟡中</td><td>震荡市优势消失</td></tr>
+        <tr><td><strong>H14</strong></td><td>buy正向信号</td><td>🟡中⚠️</td><td>震荡市反转</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Evolution Timeline -->
+  <div class="card span-12">
+    <div class="section-label">进化时间线</div>
+    <div class="section-title">📅 关键里程碑</div>
+    <div class="timeline" style="display:grid;grid-template-columns:1fr 1fr;gap:0 40px;">
+      <div>
+        <div class="tl-item">
+          <div class="tl-date">2026-06-23</div>
+          <div class="tl-title">全量复盘 + H50 漏网之鱼 SOP 建立</div>
+          <div class="tl-desc">H41→🟢极高，H49 卖分正相关初证。发现算法评分方向性错误，涨停前夜形态=全面扣分区。</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-date">2026-06-29</div>
+          <div class="tl-title">H51a 🟡中→🟢高 + 熊市确认</div>
+          <div class="tl-desc">1117只漏网之鱼：涨停过滤是 CR&lt;2% 唯一根因。MA20&lt;MA60 熊市开启。</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-date">2026-07-02</div>
+          <div class="tl-title">H51a →🟢极高 + H52 新增</div>
+          <div class="tl-desc">7天2662只验证涨停过滤=唯一漏因被7/4数据打破：评分偏低49%>涨停过滤30%。H52形态偏差假设立项。</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-date">2026-07-05</div>
+          <div class="tl-title">H52 →🟢高 + 漏因三峰确认</div>
+          <div class="tl-desc">连续5天评分偏低=首要漏因（49-75%）。H52满足🟢高门槛（≥3批次）。</div>
+        </div>
+        <div class="tl-item peak">
+          <div class="tl-date">2026-07-06</div>
+          <div class="tl-title">🔥 Round 4 PEA Evolution PASS</div>
+          <div class="tl-desc">loop-engineer 三阶段（Plan 145s → Execute 828s → Evaluate 188s）自主执行 H52 代码落地。pattern_clarity 熊市降权70%。5/5验收通过。</div>
+        </div>
+        <div class="tl-item peak">
+          <div class="tl-date">2026-07-09</div>
+          <div class="tl-title">🔥 Capture Rate 13.7% 历史新高</div>
+          <div class="tl-desc">H52 fix 四批次验证：1.8%→4.4%→6.3%→13.7%（+661%）。同时暴露PE框架在科技反弹中失效，H53 建立。</div>
+        </div>
+      </div>
+      <div>
+        <div class="tl-item peak">
+          <div class="tl-date">2026-07-10</div>
+          <div class="tl-title">13.7% 持平 + PE异常26.3%历史最高</div>
+          <div class="tl-desc">全面普涨暴露三层PE过滤系统性崩坏。H38 4次教科书拦截→🟢极高。H52维度饱和确认。</div>
+        </div>
+        <div class="tl-item crisis">
+          <div class="tl-date">2026-07-11</div>
+          <div class="tl-title">🔴 7/5进化回溯：排名单调性反转</div>
+          <div class="tl-desc">Q1(1-12名)-3.23% vs Q4(37-50名)+2.20%，头尾差-5.43%。算法排名与收益系统性负相关。CR从13.7%骤降至5.9%。</div>
+        </div>
+        <div class="tl-item crisis">
+          <div class="tl-date">2026-07-12</div>
+          <div class="tl-title">🔴 CR 2.2% 算法史上最低（当时）</div>
+          <div class="tl-desc">H51c均线粘合蓄势型系统性惩罚成最大瓶颈（33.6%）。漏因三峰连续三日固化：评分偏低37%+涨停33%+PE异常26%。</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-date">2026-07-13</div>
+          <div class="tl-title">Pipeline 一致性验证通过</div>
+          <div class="tl-desc">自动 review JSON 与手动 THEORY.md 数值精确匹配——管道成熟度里程碑。发现 scan↔review 时序 bug。</div>
+        </div>
+        <div class="tl-item crisis">
+          <div class="tl-date">2026-07-15</div>
+          <div class="tl-title">🔴 CR 1.1% 算法史上绝对最低</div>
+          <div class="tl-desc">四日崩塌-92%。根因升级：H41空头趋势-15分系统性惩罚占评分偏低45.2%主体。行情风格从「均线粘合蓄势突破」切换为「空头超跌反弹」。PEA loop失败（4轮后Planner无法产出结构化输出），手动复审继续有效。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- H41 Case Study -->
+  <div class="card span-6">
+    <div class="section-label">案例研究</div>
+    <div class="section-title">🔬 兖矿能源 — H41 空头惩罚教科书案例</div>
+    <table>
+      <thead>
+        <tr><th>属性</th><th>值</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>wave_score</td><td><strong>67</strong>（高分）</td></tr>
+        <tr><td>趋势</td><td>空头排列</td></tr>
+        <tr><td>算法惩罚</td><td style="color:var(--neg)"><strong>-15 分</strong>（空头趋势扣分）</td></tr>
+        <tr><td>实际排名</td><td>TOP100 之外</td></tr>
+        <tr><td>7/15 涨幅</td><td style="color:var(--pos)"><strong>+5.2%</strong></td></tr>
+        <tr><td>7/14 B档入选原因</td><td>H38 消息面+油价暴涨（非波浪评分）</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:13px;color:var(--dim);margin-top:10px;">
+      空头趋势在反弹市中本应是 +5 分正信号（H41），但算法 -15 分惩罚将其系统性压出 TOP100。<strong>42% 漏网股为空头趋势</strong>，是 capture_rate 1.1% 的核心驱动力。H41 持续验证 13+ 批次但代码仍未落地——这是 Round 5 的 P0 首要任务。
+    </p>
+  </div>
+
+  <!-- H53 PE Anomaly -->
+  <div class="card span-6">
+    <div class="section-label">PE 框架崩坏追踪</div>
+    <div class="section-title">📉 H53 五批次验证</div>
+    <table>
+      <thead>
+        <tr><th>日期</th><th>PE异常占比</th><th>行情风格</th><th>解读</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>7/9</td><td style="color:var(--warn)">9.2%</td><td>科技集中反弹</td><td>科创板/创业板PE>100</td></tr>
+        <tr><td>7/10</td><td style="color:var(--neg)"><strong>26.3%</strong></td><td>全面普涨</td><td>亏损PE占比36.7%↑</td></tr>
+        <tr><td>7/11</td><td style="color:var(--warn)">14.7%</td><td>国防军工</td><td>板块PE相对合理</td></tr>
+        <tr><td>7/12</td><td style="color:var(--neg)"><strong>26%</strong></td><td>多板块无序</td><td>PE异常高位稳定</td></tr>
+        <tr><td>7/15</td><td style="color:var(--pos)"><strong>17.6%↓</strong></td><td>医药/消费超跌</td><td>五批次最低</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:13px;color:var(--dim);margin-top:10px;">
+      <span class="badge badge-green">板块PE特征子假设部分验证</span>
+      PE框架破坏力随领涨板块PE特征变化，非全时恒定。7/15 医药/消费反弹中PE异常降至五批次最低——部分验证「PE框架是市场风格敏感型缺陷」。
+    </p>
+  </div>
+
+  <!-- Footer -->
+  <div class="card span-12 footer">
+    <p>🌊 波浪选股自进化系统 · <a href="https://xinyedds.github.io/wave-report/">返回每日报告</a> · <a href="https://xinyedds.github.io/wave-report/alpha.html">Alpha 追踪</a></p>
+    <p style="margin-top:6px;">最后更新: 2026-07-16 | 累计样本: ~650只次 + 漏网之鱼 ~5697只 | 熊市第13天 | test段不调参</p>
+  </div>
+
+</div>
+</body>
+</html>
