@@ -1,0 +1,43 @@
+{
+  "date": "20260720",
+  "scan_info": {
+    "top100": 100,
+    "market_regime": "未知"
+  },
+  "market_context": {
+    "phase": "fallback 提取",
+    "advice": "参考 .review_output.txt"
+  },
+  "final_tiers": {
+    "A": {
+      "count": 0,
+      "note": "fallback extraction",
+      "stocks": []
+    },
+    "B": {
+      "count": 0,
+      "note": "fallback extraction",
+      "stocks": []
+    },
+    "C": {
+      "count": 0,
+      "note": "fallback extraction",
+      "stocks": []
+    },
+    "D": {
+      "count": 0,
+      "note": "fallback extraction",
+      "stocks": []
+    }
+  },
+  "risk_summary": {
+    "key_risks": [
+      "复审 JSON 由 fallback 脚本提取，可能不完整"
+    ]
+  },
+  "review_method": "wave-reviewer agent + fallback extraction",
+  "notable_changes": {
+    "note": "fallback extraction, see .review_output.txt"
+  },
+  "_raw_output": ".review_output.txt"
+}
