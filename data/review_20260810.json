@@ -1,0 +1,84 @@
+{
+  "date": "20260810",
+  "scan_info": {
+    "total_scanned": 4780,
+    "top100": 100,
+    "market_regime": "熊市（MA20<MA60）",
+    "capture_rate": "2.1%",
+    "buy_rating_count": null
+  },
+  "market_context": {
+    "phase": "熊市，H20选股系统性失效，H45防御逻辑激活",
+    "ma20_below_ma60": true,
+    "advice": "A=0宁缺毋滥（连续5日），B档5只全部H35避风港路径"
+  },
+  "final_tiers": {
+    "A": {
+      "count": 0,
+      "note": "熊市无完美信号，宁缺毋滥（H20持续验证）",
+      "stocks": []
+    },
+    "B": {
+      "count": 5,
+      "note": "全部H35避风港路径（食品饮料/公路/消费电子/电力/中药），五个板块分散",
+      "stocks": [
+        {
+          "code": "603345",
+          "name": "安井食品",
+          "reason": "H35食品饮料避风港+PE甜点19.4+摩根大通增持+估值历史低位",
+          "risk": "止损仅1.3%空间，熊市消费需求不确定性"
+        },
+        {
+          "code": "600350",
+          "name": "山东高速",
+          "reason": "H35公路避风港+强烈买入+零风险信号+周K多头+PE甜点19.9",
+          "risk": "日K空头矛盾，高速车流量受经济下行影响"
+        },
+        {
+          "code": "603296",
+          "name": "华勤技术",
+          "reason": "H34大盘1240亿保护+PE甜点20.4+消费电子ODM龙头",
+          "risk": "net偏低，科技股熊市估值压缩"
+        },
+        {
+          "code": "600025",
+          "name": "华能水电",
+          "reason": "H35电力+H34大盘1802亿+0.786深度回调+连跌6日止跌+MA60支撑+融资净买入",
+          "risk": "水电来水季节性波动"
+        },
+        {
+          "code": "002349",
+          "name": "精华制药",
+          "reason": "强烈买入+PE甜点25.7+交替合理+MACD金叉+0.786深度筑底",
+          "risk": "net偏低，制裁解除利好持续性待验证"
+        }
+      ]
+    },
+    "C": {
+      "count": 41,
+      "note": "待观察，部分有亮点但存在关键瑕疵",
+      "stocks": []
+    },
+    "D": {
+      "count": 54,
+      "note": "明确排除，含涨停追高/PE极端/题材/H46 net≈0拦截",
+      "stocks": []
+    }
+  },
+  "key_interceptions": {
+    "H46_net_zero": 16,
+    "H51a_limit_up_chase": 12,
+    "PE_extreme": 25,
+    "H23_theme_stocks": 3,
+    "H15_financial": 2,
+    "H28_buy_trap": 1
+  },
+  "controversial": [
+    {
+      "stock": "格力电器(000651)",
+      "issue": "H34大盘+H35消费 vs PE=7.7(H18)+观望/卖出",
+      "verdict": "争议升B档候选：连跌6日超跌+周K多头+消费防御>PE瑕疵"
+    }
+  ],
+  "timestamp": "20260810_200500"
+}
